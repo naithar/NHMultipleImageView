@@ -42,9 +42,16 @@
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {
+    self.multiImageView.backgroundColor = nil;
     [super setSelected:selected animated:animated];
-
+self.multiImageView.backgroundColor = nil;
     // Configure the view for the selected state
+}
+
+- (void)setHighlighted:(BOOL)highlighted animated:(BOOL)animated {
+    self.multiImageView.backgroundColor = nil;
+    [super setHighlighted:highlighted animated:animated];
+    self.multiImageView.backgroundColor = nil;
 }
 
 @end

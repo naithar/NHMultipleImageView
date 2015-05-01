@@ -301,8 +301,8 @@
 
 //    CGContextSetReg
 //                CGContextSetRGBFillColor(context, 0.5, 0.5, 0.5, 1);
-
-//                CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
+    [self.backgroundColor set];
+    UIRectFill((CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
 
                 CGFloat value = image.size.width / image.size.height;
 
