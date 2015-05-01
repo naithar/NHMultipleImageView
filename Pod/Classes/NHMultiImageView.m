@@ -49,7 +49,7 @@
 - (void)commonInit {
     _contentInsets = UIEdgeInsetsZero;
     _imageInsets = UIEdgeInsetsZero;
-    _imageArray = [[NSMutableArray alloc] initWithCapacity:10];
+    _imageArray = [[NSMutableArray alloc] init];
 
     _pattern = @[
                  @[@{

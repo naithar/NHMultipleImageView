@@ -18,18 +18,26 @@
     self.multiImageView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
-    [self.multiImageView addImage:[UIImage imageNamed:@"img6"] toIndex:0];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:0];
 
     [self.multiImageView addImage:[NSNull null] toIndex:1];
     //
-    [self.multiImageView addImage:[UIImage imageNamed:@"img6"] toIndex:2];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img6"] toIndex:3];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img6"] toIndex:4];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img6"] toIndex:5];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img6"] toIndex:6];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:13];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:2];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:3];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:4];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:5];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:6];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:7];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:8];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:9];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:10];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:11];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
+
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 5), dispatch_get_main_queue(), ^{
-        [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:1];
+        [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:1];
     });
 }
 
