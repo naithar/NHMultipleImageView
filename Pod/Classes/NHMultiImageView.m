@@ -147,7 +147,6 @@
     _contentInsets = UIEdgeInsetsZero;
     _imageInsets = UIEdgeInsetsZero;
     _imageArray = [[NSMutableArray alloc] init];
-
     _pattern = [[self class] defaultPattern];
 
     self.opaque = YES;
@@ -192,7 +191,7 @@
             //                    [[UIColor blueColor] setFill];
             //                    [path fill];
 
-            [[UIColor redColor] setFill];
+            [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor])  setFill];
 
             //                    [path stroke];
             //                    UIRectFill(imageRect);
@@ -201,7 +200,7 @@
         }
         else {
             //                        path
-            [[UIColor redColor] set];
+            [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor])  set];
             UIRectFill(imageRect);
         }
 
@@ -291,18 +290,33 @@
 //            if (resultImage == nil) {
 
 
-                UIGraphicsBeginImageContextWithOptions(size, YES, 0);
+                UIGraphicsBeginImageContextWithOptions(size, NO, 0);
 
-                CGContextRef context = UIGraphicsGetCurrentContext();
-        
+//                CGContextRef context = UIGraphicsGetCurrentContext();
+
                 //        [[UIColor clearColor] set];
         
-                CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
+//                CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
 
 //    CGContextSetReg
+
+//    if (conrners) {
+//        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
+//        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
+//                                                        cornerRadius:self.cornerRadius];
+//
+//        [path fill];
+////        [path addClip];
+//    }
+//    else {
+//        [(self.backgroundColor ?: [UIColor whiteColor]) set];
+//        UIRectFill((CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
 //                CGContextSetRGBFillColor(context, 0.5, 0.5, 0.5, 1);
-    [self.backgroundColor set];
-    UIRectFill((CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
+//    CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
+//    }
+
+//    [self.backgroundColor set];
+//    UIRectFill((CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
 
                 CGFloat value = image.size.width / image.size.height;
 
@@ -377,11 +391,12 @@
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
                                                         cornerRadius:self.cornerRadius];
 
+        path.lineWidth = 0;
         [path fill];
         [path addClip];
     }
     else {
-        [[UIColor redColor] set];
+        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
         UIRectFill(CGRectMake(x, y, floor(width), floor(height)));
     }
                 [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
@@ -443,5 +458,4 @@
         [self setNeedsDisplay];
     }
 }
-
 @end
