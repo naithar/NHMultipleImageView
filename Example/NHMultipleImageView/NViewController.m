@@ -9,7 +9,8 @@
 #import "NViewController.h"
 #import <NHMultiImageView.h>
 
-@interface NViewController ()
+@interface NViewController ()<UITableViewDataSource>
+@property (strong, nonatomic) IBOutlet UITableView *tableView;
 
 @end
 
@@ -17,29 +18,33 @@
 
 - (void)viewDidLoad
 {
+
+//    NHMultiImageView *view = [[NHMultiImageView alloc] initWithFrame:CGRectMake(0, 0, 150, 150)];
+//
+//    [self.view addSubview:view];
+    //    view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+
+
+
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 
-    NHMultiImageView *view = [[NHMultiImageView alloc] initWithFrame:CGRectMake(0, 0, 150, 150)];
 
-    [self.view addSubview:view];
-//    view.backgroundColor = [UIColor groupTableViewBackgroundColor];
-    view.imageCount = 1;
+    self.tableView.rowHeight = 320;
+    self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    [self.tableView registerNib:[UINib nibWithNibName:@"MultiImageCell" bundle:nil] forCellReuseIdentifier:@"cell"];
+    self.tableView.dataSource = self;
 
-    [view addImage:[UIImage imageNamed:@"img6"] toIndex:2];
-    
-    [view addImage:[UIImage imageNamed:@"img6"] toIndex:1];
-//
-    [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
-        [view addImage:[UIImage imageNamed:@"img6"] toIndex:3];
-        [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
-            [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
-    [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
+}
 
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
+    return 100;
+}
 
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"cell"];
 
-
-
+    return cell;
 }
 
 - (void)didReceiveMemoryWarning

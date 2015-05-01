@@ -47,7 +47,9 @@
 }
 
 - (void)commonInit {
-    _imageArray = [[NSMutableArray alloc] initWithCapacity:4];
+    _contentInsets = UIEdgeInsetsZero;
+    _imageInsets = UIEdgeInsetsZero;
+    _imageArray = [[NSMutableArray alloc] initWithCapacity:10];
 
     _pattern = @[
                  @[@{
@@ -141,13 +143,19 @@
 
 }
 
+- (void)addImage:(UIImage *)image {
+    [self.imageArray addObject:image];
+    [self setNeedsDisplay];
+}
+
 - (void)addImage:(UIImage*)image
          toIndex:(NSInteger)index {
-//    if (index > self.imageArray.count) {
-//        return;
-//    }
+    if (index > self.imageArray.count) {
+        return;
+    }
 
-    [self.imageArray addObject:image];
+    self.imageArray[index] = image;
+    [self setNeedsDisplay];
 }
 
 
@@ -156,17 +164,24 @@
     [self.backgroundColor set];
     UIRectFill(rect);
 
+    CGRect contentRect = UIEdgeInsetsInsetRect(rect, self.contentInsets);
+
     if (self.imageArray.count > 0 && self.imageArray.count <= 6) {
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+
+            if (!self.imageArray[idx]
+                || [self.imageArray[idx] isKindOfClass:[NSNull class]]) {
+                return;
+            }
             CGPoint patternOrigin = [obj[@"origin"] CGPointValue];
             CGSize patternSize = [obj[@"size"] CGSizeValue];
 
-            CGRect imageRect = CGRectMake(patternOrigin.x * rect.size.width,
-                                     patternOrigin.y * rect.size.height,
-                                     patternSize.width * rect.size.width,
-                                          patternSize.height * rect.size.height);
+            CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + self.imageInsets.left,
+                                          self.contentInsets.top + patternOrigin.y * contentRect.size.height + self.imageInsets.top,
+                                          patternSize.width * contentRect.size.width - self.imageInsets.left - self.imageInsets.right,
+                                          patternSize.height * contentRect.size.height - self.imageInsets.top - self.imageInsets.bottom);
 
             [[self prepareImage:self.imageArray[idx] forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
         }];
@@ -176,14 +191,18 @@
         NSArray *currentPattern = self.pattern[5];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            if (!self.imageArray[idx]
+                || [self.imageArray[idx] isKindOfClass:[NSNull class]]) {
+                return;
+            }
+
             CGPoint patternOrigin = [obj[@"origin"] CGPointValue];
             CGSize patternSize = [obj[@"size"] CGSizeValue];
 
-            CGRect imageRect = CGRectMake(patternOrigin.x * rect.size.width,
-                                          patternOrigin.y * rect.size.height,
-                                          patternSize.width * rect.size.width,
-                                          patternSize.height * rect.size.height);
-
+            CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + self.imageInsets.left,
+                                          self.contentInsets.top + patternOrigin.y * contentRect.size.height + self.imageInsets.top,
+                                          patternSize.width * contentRect.size.width - self.imageInsets.left - self.imageInsets.right,
+                                          patternSize.height * contentRect.size.height - self.imageInsets.top - self.imageInsets.bottom);
             if (idx == 5) {
                 [[UIBezierPath bezierPathWithRoundedRect:imageRect
                                             cornerRadius:5.0] addClip];
