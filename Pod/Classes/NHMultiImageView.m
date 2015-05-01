@@ -12,6 +12,7 @@
 
 @property (nonatomic, strong) NSMutableArray *imageArray;
 
+@property (nonatomic, strong) NSArray *pattern;
 @end
 
 @implementation NHMultiImageView
@@ -48,6 +49,93 @@
 - (void)commonInit {
     _imageArray = [[NSMutableArray alloc] initWithCapacity:4];
 
+    _pattern = @[
+                 @[@{
+                     @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+                     @"size" : [NSValue valueWithCGSize:CGSizeMake(1, 1)]
+                    }], //1
+                 @[@{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+                       }], //2
+                 @[@{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+                       }], //3
+                 @[@{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0.5)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+                       }], //4
+                 @[@{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       }], //5
+                 @[@{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
+                       },
+                   @{
+                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.75, 0.75)],
+                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
+                       }], //6
+                 ];
+
     self.opaque = YES;
     self.clipsToBounds = YES;
 
@@ -68,39 +156,52 @@
     [self.backgroundColor set];
     UIRectFill(rect);
 
-    switch (self.imageArray.count) {
-        case 1:
-            [[self prepareImage:self.imageArray.firstObject forSize:rect.size useConrners:NO] drawInRect:rect];
-            break;
-        case 2: {
-            CGRect rect1 = rect;
-            rect1.size.width = rect1.size.width / 2 - 5;
+    if (self.imageArray.count > 0 && self.imageArray.count <= 6) {
+        NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
-            CGRect rect2 = rect1;
-            rect2.origin.x = rect1.size.width + 10;
+        [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            CGPoint patternOrigin = [obj[@"origin"] CGPointValue];
+            CGSize patternSize = [obj[@"size"] CGSizeValue];
 
-            [[self prepareImage:self.imageArray.firstObject forSize:rect1.size useConrners:YES] drawInRect:rect1];
-            [[self prepareImage:self.imageArray[1] forSize:rect2.size useConrners:YES] drawInRect:rect2];
-        } break;
-        case 3: {
-            CGRect rect1 = rect;
-            rect1.size.width = rect1.size.width / 2 - 5;
+            CGRect imageRect = CGRectMake(patternOrigin.x * rect.size.width,
+                                     patternOrigin.y * rect.size.height,
+                                     patternSize.width * rect.size.width,
+                                          patternSize.height * rect.size.height);
 
-            CGRect rect2 = rect1;
-            rect2.origin.x = rect1.size.width + 10;
-            rect2.size.height = rect2.size.height / 2 - 5;
-
-            CGRect rect3 = rect2;
-            rect3.origin.y = rect2.size.height + 10;
-            rect3.size.height /= 2;
-
-            [[self prepareImage:self.imageArray.firstObject forSize:rect1.size useConrners:YES] drawInRect:rect1];
-            [[self prepareImage:self.imageArray[1] forSize:rect2.size useConrners:YES] drawInRect:rect2];
-            [[self prepareImage:self.imageArray[2] forSize:rect3.size useConrners:YES] drawInRect:rect3];
-        } break;
-        default:
-            break;
+            [[self prepareImage:self.imageArray[idx] forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
+        }];
+        
     }
+    else if (self.imageArray.count > 6) {
+        NSArray *currentPattern = self.pattern[5];
+
+        [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            CGPoint patternOrigin = [obj[@"origin"] CGPointValue];
+            CGSize patternSize = [obj[@"size"] CGSizeValue];
+
+            CGRect imageRect = CGRectMake(patternOrigin.x * rect.size.width,
+                                          patternOrigin.y * rect.size.height,
+                                          patternSize.width * rect.size.width,
+                                          patternSize.height * rect.size.height);
+
+            if (idx == 5) {
+                [[UIBezierPath bezierPathWithRoundedRect:imageRect
+                                            cornerRadius:5.0] addClip];
+                [[UIColor redColor] set];
+                UIRectFill(imageRect);
+
+                [[@(self.imageArray.count - 5) stringValue] drawInRect:imageRect withAttributes:@{
+                                                                                                  NSFontAttributeName : [UIFont systemFontOfSize:12],
+                                                                                                  NSForegroundColorAttributeName: [UIColor greenColor]
+                                                                                                  }];
+            }
+            else {
+            [[self prepareImage:self.imageArray[idx] forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
+            }
+
+        }];
+    }
+
 }
 
 - (UIImage*)prepareImage:(UIImage*)image forSize:(CGSize)size useConrners:(BOOL)conrners {
@@ -118,7 +219,7 @@
                 //        [[UIColor clearColor] set];
         
                 CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-                CGContextSetRGBFillColor(context, 0, 0, 0, 1);
+                CGContextSetRGBFillColor(context, 0.5, 0.5, 0.5, 1);
         
                 CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
         
@@ -147,11 +248,11 @@
                     }
                     else if (value2 < 1) {
 
-//                        height /= value;
-//                        y -= (height - size.height) / 2;
-//
-//                        width /= value2;
-//                        x -= width / 4;
+//                                                height /= value;
+                        //                        y -= (height - size.height) / 2;
+                        //
+//                                                width /= value;
+                        //                        x -= width / 4;
                     }
                     else {
                         height /= value;
@@ -165,7 +266,7 @@
 
                     if (value2 > 1) {
 
-//                        width /= value;
+//                        width *= value;
 //                        x -= (width - size.width) / 2;
 
 //                        height *= value2;

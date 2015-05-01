@@ -20,17 +20,21 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
 
-    NHMultiImageView *view = [[NHMultiImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)];
+    NHMultiImageView *view = [[NHMultiImageView alloc] initWithFrame:CGRectMake(0, 0, 150, 150)];
 
     [self.view addSubview:view];
 //    view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     view.imageCount = 1;
 
-    [view addImage:[UIImage imageNamed:@"img4"] toIndex:2];
+    [view addImage:[UIImage imageNamed:@"img6"] toIndex:2];
     
-    [view addImage:[UIImage imageNamed:@"img4"] toIndex:1];
-
-    [view addImage:[UIImage imageNamed:@"img4"] toIndex:0];
+    [view addImage:[UIImage imageNamed:@"img6"] toIndex:1];
+//
+    [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
+        [view addImage:[UIImage imageNamed:@"img6"] toIndex:3];
+        [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
+            [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
+    [view addImage:[UIImage imageNamed:@"img6"] toIndex:0];
 
 
 
