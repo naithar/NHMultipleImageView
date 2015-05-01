@@ -17,6 +17,103 @@
 
 @implementation NHMultiImageView
 
++ (NSArray*)defaultPattern {
+    static dispatch_once_t token;
+    __strong static NSArray* instance = nil;
+    dispatch_once(&token, ^{
+
+    instance = @[
+      @[@{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(1, 1)]
+            }], //1
+      @[@{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+            }], //2
+      @[@{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+            }], //3
+      @[@{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0.5)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
+            }], //4
+      @[@{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            }], //5
+      @[@{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
+            },
+        @{
+            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.75, 0.75)],
+            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
+            }], //6
+      ];
+
+    });
+
+    return instance;
+}
+
 - (instancetype)init {
     self = [super init];
 
@@ -51,92 +148,7 @@
     _imageInsets = UIEdgeInsetsZero;
     _imageArray = [[NSMutableArray alloc] init];
 
-    _pattern = @[
-                 @[@{
-                     @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-                     @"size" : [NSValue valueWithCGSize:CGSizeMake(1, 1)]
-                    }], //1
-                 @[@{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-                       }], //2
-                 @[@{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-                       }], //3
-                 @[@{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0.5)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-                       }], //4
-                 @[@{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       }], //5
-                 @[@{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
-                       },
-                   @{
-                       @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.75, 0.75)],
-                       @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
-                       }], //6
-                 ];
+    _pattern = [[self class] defaultPattern];
 
     self.opaque = YES;
     self.clipsToBounds = YES;
@@ -158,9 +170,80 @@
     [self setNeedsDisplay];
 }
 
+- (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect {
+    CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
+    CGSize patternSize = [pattern[@"size"] CGSizeValue];
+
+    CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + self.imageInsets.left,
+                                  self.contentInsets.top + patternOrigin.y * contentRect.size.height + self.imageInsets.top,
+                                  patternSize.width * contentRect.size.width - self.imageInsets.left - self.imageInsets.right,
+                                  patternSize.height * contentRect.size.height - self.imageInsets.top - self.imageInsets.bottom);
+
+    return imageRect;
+}
+
+- (void)drawImage:(UIImage*)image inRect:(CGRect)imageRect {
+    if (!image
+        || [image isKindOfClass:[NSNull class]]) {
+
+        if (self.imageArray.count > 1) {
+            //                    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:5.0];
+
+            //                    [[UIColor blueColor] setFill];
+            //                    [path fill];
+
+            [[UIColor redColor] setFill];
+
+            //                    [path stroke];
+            //                    UIRectFill(imageRect);
+
+            [[UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:self.cornerRadius] fill];
+        }
+        else {
+            //                        path
+            [[UIColor redColor] set];
+            UIRectFill(imageRect);
+        }
+
+    }
+    else {
+
+        [[self prepareImage:image forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
+    }
+}
+
+- (void)drawCountPlaceholderAtImageRect:(CGRect)imageRect {
+    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:self.cornerRadius];
+
+    //                    [[UIColor blueColor] setFill];
+    //                    [path fill];
+
+    [[UIColor redColor] setFill];
+
+    //                    [path stroke];
+    //                    UIRectFill(imageRect);
+
+    [path fill];
+
+    NSMutableParagraphStyle *paragraphStyle = [[NSParagraphStyle defaultParagraphStyle] mutableCopy];
+    paragraphStyle.alignment = NSTextAlignmentCenter;
+    paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
+
+    CGRect textRect = imageRect;
+    CGFloat lineHeight = (self.textFont ?: [UIFont systemFontOfSize:17]).lineHeight;
+    textRect.size.height = lineHeight;
+    textRect.origin.y = textRect.origin.y + (imageRect.size.height - textRect.size.height) / 2;
+
+
+
+    [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - 5)] drawInRect:textRect withAttributes:@{
+                                                                                                                 NSFontAttributeName : self.textFont ?: [UIFont systemFontOfSize:17],
+                                                                                                                 NSForegroundColorAttributeName: self.textColor ?: [UIColor blackColor],
+                                                                                                                 NSParagraphStyleAttributeName : paragraphStyle
+                                                                                                                 }];
+}
 
 - (void)drawRect:(CGRect)rect {
-
     [self.backgroundColor set];
     UIRectFill(rect);
 
@@ -171,19 +254,12 @@
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
 
-            if (!self.imageArray[idx]
-                || [self.imageArray[idx] isKindOfClass:[NSNull class]]) {
-                return;
-            }
-            CGPoint patternOrigin = [obj[@"origin"] CGPointValue];
-            CGSize patternSize = [obj[@"size"] CGSizeValue];
 
-            CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + self.imageInsets.left,
-                                          self.contentInsets.top + patternOrigin.y * contentRect.size.height + self.imageInsets.top,
-                                          patternSize.width * contentRect.size.width - self.imageInsets.left - self.imageInsets.right,
-                                          patternSize.height * contentRect.size.height - self.imageInsets.top - self.imageInsets.bottom);
 
-            [[self prepareImage:self.imageArray[idx] forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+
+            [self drawImage:self.imageArray[idx] inRect:imageRect];
+
         }];
         
     }
@@ -191,31 +267,15 @@
         NSArray *currentPattern = self.pattern[5];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            if (!self.imageArray[idx]
-                || [self.imageArray[idx] isKindOfClass:[NSNull class]]) {
-                return;
-            }
 
-            CGPoint patternOrigin = [obj[@"origin"] CGPointValue];
-            CGSize patternSize = [obj[@"size"] CGSizeValue];
 
-            CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + self.imageInsets.left,
-                                          self.contentInsets.top + patternOrigin.y * contentRect.size.height + self.imageInsets.top,
-                                          patternSize.width * contentRect.size.width - self.imageInsets.left - self.imageInsets.right,
-                                          patternSize.height * contentRect.size.height - self.imageInsets.top - self.imageInsets.bottom);
-            if (idx == 5) {
-                [[UIBezierPath bezierPathWithRoundedRect:imageRect
-                                            cornerRadius:5.0] addClip];
-                [[UIColor redColor] set];
-                UIRectFill(imageRect);
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
-                [[@(self.imageArray.count - 5) stringValue] drawInRect:imageRect withAttributes:@{
-                                                                                                  NSFontAttributeName : [UIFont systemFontOfSize:12],
-                                                                                                  NSForegroundColorAttributeName: [UIColor greenColor]
-                                                                                                  }];
+            if (idx >= 5) {
+                [self drawCountPlaceholderAtImageRect:imageRect];
             }
             else {
-            [[self prepareImage:self.imageArray[idx] forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
+                [self drawImage:self.imageArray[idx] inRect:imageRect];
             }
 
         }];
@@ -238,10 +298,12 @@
                 //        [[UIColor clearColor] set];
         
                 CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-                CGContextSetRGBFillColor(context, 0.5, 0.5, 0.5, 1);
-        
-                CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-        
+
+//    CGContextSetReg
+//                CGContextSetRGBFillColor(context, 0.5, 0.5, 0.5, 1);
+
+//                CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
+
                 CGFloat value = image.size.width / image.size.height;
 
 //    CGFloat dif = fmin(((CGFloat)size.height / (CGFloat)image.size.height), ((CGFloat)size.width / (CGFloat)image.size.width));
@@ -309,12 +371,21 @@
 
 
 
+
     if (conrners) {
-    [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
-                                cornerRadius:5.0] addClip];
+        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
+                                                        cornerRadius:self.cornerRadius];
+
+        [path fill];
+        [path addClip];
+    }
+    else {
+        [[UIColor redColor] set];
+        UIRectFill(CGRectMake(x, y, floor(width), floor(height)));
     }
                 [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
-        
+
                 UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
         
 //                [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
@@ -327,128 +398,50 @@
             return resultImage;
 }
 
-@end
+- (void)setCornerRadius:(CGFloat)cornerRadius {
+    [self willChangeValueForKey:@"cornerRadius"];
+    _cornerRadius = cornerRadius;
+    [self didChangeValueForKey:@"cornerRadius"];
+    [self setNeedsDisplay];
+}
 
-//
-//+ (UIImage*)avatarPlaceholderImage {
-//    static dispatch_once_t token;
-//    __strong static UIImage* instance = nil;
-//    dispatch_once(&token, ^{
-//        UIImage *image = [UIImage imageNamed:@"avatar.placeholder"];
-//        UIGraphicsBeginImageContextWithOptions((CGSize) { .width = 35, .height = 35 }, NO, 0);
-//
-//        CGContextRef context = UIGraphicsGetCurrentContext();
-//
-//        //        [[UIColor clearColor] set];
-//
-//        CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size.width = 35, .size.height = 35 });
-//        CGContextSetRGBFillColor(context, 1, 1, 1, 0.25);
-//
-//        CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size.width = 35, .size.height = 35 });
-//
-//        CGFloat value = image.size.width / image.size.height;
-//
-//        CGFloat height = 35;
-//        CGFloat width = 35;
-//        CGFloat x = 0;
-//        CGFloat y = 0;
-//
-//        if (value < 1) {
-//            height /= value;
-//            y -= (height - 35) / 2;
-//        }
-//        else {
-//            width *= value;
-//            x -= (width - 35) / 2;
-//        }
-//
-//
-//        CGFloat radius = 17.5;
-//
-//        CGContextBeginPath(context);
-//        CGContextAddArc(context, 17.5, 17.5, radius, 0, 10, 0);
-//        CGContextClosePath(context);
-//        CGContextClip(context);
-//
-//        [image drawInRect:CGRectMake(x, y, width, height)];
-//
-//        instance = UIGraphicsGetImageFromCurrentImageContext();
-//
-//        UIGraphicsEndImageContext();
-//    });
-//
-//    return instance;
-//}
-//
-//- (UIImage*)imageForShaker:(UIImage*)image cacheKey:(NSString*)cacheKey {
-//
-//    if (image == nil) {
-//        return [[self class] avatarPlaceholderImage];
-//    }
-//
-//    //    UIImage *avatarImage = image ?: [UIImage imageNamed:@"avatar.placeholder"];
-//
-//    UIImage *resultImage = [[[self class] shakersCache] objectForKey:cacheKey];
-//
-//    if (resultImage == nil) {
-//        UIGraphicsBeginImageContextWithOptions((CGSize) { .width = 35, .height = 35 }, NO, 0);
-//
-//        CGContextRef context = UIGraphicsGetCurrentContext();
-//
-//        //        [[UIColor clearColor] set];
-//
-//        CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size.width = 35, .size.height = 35 });
-//        CGContextSetRGBFillColor(context, 1, 1, 1, 0.25);
-//
-//        CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size.width = 35, .size.height = 35 });
-//
-//        CGFloat value = image.size.width / image.size.height;
-//
-//        CGFloat height = 35;
-//        CGFloat width = 35;
-//        CGFloat x = 0;
-//        CGFloat y = 0;
-//
-//        if (value < 1) {
-//            height /= value;
-//            y -= (height - 35) / 2;
-//        }
-//        else {
-//            width *= value;
-//            x -= (width - 35) / 2;
-//        }
-//
-//
-//        CGFloat radius = 17.5;
-//
-//        CGContextBeginPath(context);
-//        CGContextAddArc(context, 17.5, 17.5, radius, 0, 10, 0);
-//        CGContextClosePath(context);
-//        CGContextClip(context);
-//
-//        [image drawInRect:CGRectMake(x, y, width, height)];
-//
-//        resultImage = UIGraphicsGetImageFromCurrentImageContext();
-//
-//        [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
-//
-//        UIGraphicsEndImageContext();
-//    }
-//
-//    return resultImage;
-//}
-//
-//-(void)drawShakeImage:(UIImage*)image atIndex:(NSInteger)index forKey:(NSString*)cacheKey {
-//
-//    UIGraphicsBeginImageContextWithOptions(self.shakersImage.size, NO, 0);
-//
-//    [self.shakersImage drawAtPoint:CGPointMake(0, 0)];
-//
-//    [image drawAtPoint:CGPointMake(42.5*index, 0)];
-//    
-//    self.shakersImage = UIGraphicsGetImageFromCurrentImageContext();
-//    
-//    [[[self class] shakersCache] setObject:self.shakersImage forKey:cacheKey];
-//    
-//    UIGraphicsEndImageContext();
-//}
+- (void)setImageBackgroundColor:(UIColor *)imageBackgroundColor {
+    [self willChangeValueForKey:@"imageBackgroundColor"];
+    _imageBackgroundColor = imageBackgroundColor;
+    [self didChangeValueForKey:@"imageBackgroundColor"];
+    [self setNeedsDisplay];
+}
+
+- (void)setContentInsets:(UIEdgeInsets)contentInsets {
+    [self willChangeValueForKey:@"contentInsets"];
+    _contentInsets = contentInsets;
+    [self didChangeValueForKey:@"contentInsets"];
+    [self setNeedsDisplay];
+}
+
+- (void)setImageInsets:(UIEdgeInsets)imageInsets {
+    [self willChangeValueForKey:@"imageInsets"];
+    _imageInsets = imageInsets;
+    [self didChangeValueForKey:@"imageInsets"];
+    [self setNeedsDisplay];
+}
+
+- (void)setTextFont:(UIFont *)textFont {
+    [self willChangeValueForKey:@"textFont"];
+    _textFont = textFont;
+    [self didChangeValueForKey:@"textFont"];
+    if (self.imageArray.count > 6) {
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setTextColor:(UIColor *)textColor {
+    [self willChangeValueForKey:@"textColor"];
+    _textColor = textColor;
+    [self didChangeValueForKey:@"textColor"];
+    if (self.imageArray.count > 6) {
+        [self setNeedsDisplay];
+    }
+}
+
+@end

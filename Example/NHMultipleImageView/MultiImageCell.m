@@ -14,7 +14,7 @@
     // Initialization code
 
     [self.multiImageView setTranslatesAutoresizingMaskIntoConstraints:NO];
-    self.multiImageView.imageCount = 1;
+    self.multiImageView.cornerRadius = 10;
     self.multiImageView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
@@ -36,9 +36,9 @@
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
 
 
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 5), dispatch_get_main_queue(), ^{
-        [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:1];
-    });
+//    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 5), dispatch_get_main_queue(), ^{
+//        [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:1];
+//    });
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

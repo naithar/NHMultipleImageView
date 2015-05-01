@@ -10,10 +10,15 @@
 
 @interface NHMultiImageView : UIView
 
-@property (nonatomic, assign) NSUInteger imageCount;
+//@property (nonatomic, assign) NSUInteger imageCount;
 @property (nonatomic, assign) UIEdgeInsets contentInsets;
 @property (nonatomic, assign) UIEdgeInsets imageInsets;
 @property (nonatomic, strong) UIColor *imageBackgroundColor;
+
+@property (nonatomic, assign) CGFloat cornerRadius;
+
+@property (nonatomic, strong) UIFont *textFont;
+@property (nonatomic, strong) UIColor *textColor;
 
 - (void)addImage:(UIImage *)image;
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;
