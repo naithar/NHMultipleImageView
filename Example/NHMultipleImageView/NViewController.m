@@ -25,10 +25,17 @@
     [self.view addSubview:view];
 //    view.backgroundColor = [UIColor groupTableViewBackgroundColor];
     view.imageCount = 1;
-    [view addImage:[UIImage imageNamed:@"img5"] toIndex:1];
-    [view addImage:[UIImage imageNamed:@"img4"] toIndex:2];
 
-    [view addImage:[UIImage imageNamed:@"img3"] toIndex:0];
+    [view addImage:[UIImage imageNamed:@"img4"] toIndex:2];
+    
+    [view addImage:[UIImage imageNamed:@"img4"] toIndex:1];
+
+    [view addImage:[UIImage imageNamed:@"img4"] toIndex:0];
+
+
+
+
+
 }
 
 - (void)didReceiveMemoryWarning

@@ -92,6 +92,7 @@
 
             CGRect rect3 = rect2;
             rect3.origin.y = rect2.size.height + 10;
+            rect3.size.height /= 2;
 
             [[self prepareImage:self.imageArray.firstObject forSize:rect1.size useConrners:YES] drawInRect:rect1];
             [[self prepareImage:self.imageArray[1] forSize:rect2.size useConrners:YES] drawInRect:rect2];
@@ -133,27 +134,59 @@
 
                 if (value < 1) {
 
-                    height /= value;
-                    y -= (height - size.height) / 2;
+
+                    CGFloat value2 = size.width / size.height;
+
+                    if (value2 > 1) {
+
+                        height /= value;
+                        y -= (height - size.height) / 2;
+
+                        height *= value2;
+                        y -= height / 4;
+                    }
+                    else if (value2 < 1) {
+
+//                        height /= value;
+//                        y -= (height - size.height) / 2;
+//
+//                        width /= value2;
+//                        x -= width / 4;
+                    }
+                    else {
+                        height /= value;
+                        y -= (height - size.height) / 2;
+                    }
                 }
                 else {
 
-                    width *= value;
-                    x -= (width - size.width) / 2;
+
+                    CGFloat value2 = size.width / size.height;
+
+                    if (value2 > 1) {
+
+//                        width /= value;
+//                        x -= (width - size.width) / 2;
+
+//                        height *= value2;
+//                        y -= height / 4;
+                    }
+                    else if (value2 < 1) {
+
+                        width *= value;
+                        x -= (width - size.width) / 2;
+
+                        width /= value2;
+                        x -= width / 4;
+                    }
+                    else {
+                        width *= value;
+                        x -= (width - size.width) / 2;
+                    }
                 }
 
-    CGFloat value2 = size.width / size.height;
+    
 
-    if (value2 > 1) {
-
-        height *= value2;
-        y -= height / 4;
-    }
-    else if (value2 < 1) {
-
-        width /= value2;
-        x -= width / 4;
-    }
 
 
     if (conrners) {
