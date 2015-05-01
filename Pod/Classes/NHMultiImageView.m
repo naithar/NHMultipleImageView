@@ -55,11 +55,11 @@
 
 - (void)addImage:(UIImage*)image
          toIndex:(NSInteger)index {
-    if (index > self.imageArray.count) {
-        return;
-    }
+//    if (index > self.imageArray.count) {
+//        return;
+//    }
 
-    [self.imageArray insertObject:image atIndex:index];
+    [self.imageArray addObject:image];
 }
 
 
@@ -68,13 +68,41 @@
     [self.backgroundColor set];
     UIRectFill(rect);
 
-    if (self.imageArray.count > 0) {
-        CGRect rect1 = CGRectMake(50, 50, 170, 250);
-        [[self prepareImage:self.imageArray.firstObject forSize:rect1.size] drawInRect:rect1];
+    switch (self.imageArray.count) {
+        case 1:
+            [[self prepareImage:self.imageArray.firstObject forSize:rect.size useConrners:NO] drawInRect:rect];
+            break;
+        case 2: {
+            CGRect rect1 = rect;
+            rect1.size.width = rect1.size.width / 2 - 5;
+
+            CGRect rect2 = rect1;
+            rect2.origin.x = rect1.size.width + 10;
+
+            [[self prepareImage:self.imageArray.firstObject forSize:rect1.size useConrners:YES] drawInRect:rect1];
+            [[self prepareImage:self.imageArray[1] forSize:rect2.size useConrners:YES] drawInRect:rect2];
+        } break;
+        case 3: {
+            CGRect rect1 = rect;
+            rect1.size.width = rect1.size.width / 2 - 5;
+
+            CGRect rect2 = rect1;
+            rect2.origin.x = rect1.size.width + 10;
+            rect2.size.height = rect2.size.height / 2 - 5;
+
+            CGRect rect3 = rect2;
+            rect3.origin.y = rect2.size.height + 10;
+
+            [[self prepareImage:self.imageArray.firstObject forSize:rect1.size useConrners:YES] drawInRect:rect1];
+            [[self prepareImage:self.imageArray[1] forSize:rect2.size useConrners:YES] drawInRect:rect2];
+            [[self prepareImage:self.imageArray[2] forSize:rect3.size useConrners:YES] drawInRect:rect3];
+        } break;
+        default:
+            break;
     }
 }
 
-- (UIImage*)prepareImage:(UIImage*)image forSize:(CGSize)size {
+- (UIImage*)prepareImage:(UIImage*)image forSize:(CGSize)size useConrners:(BOOL)conrners {
 
 
 //            UIImage *resultImage = [[[self class] shakersCache] objectForKey:cacheKey];
@@ -82,7 +110,7 @@
 //            if (resultImage == nil) {
 
 
-                UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+                UIGraphicsBeginImageContextWithOptions(size, YES, 0);
 
                 CGContextRef context = UIGraphicsGetCurrentContext();
         
@@ -93,7 +121,7 @@
         
                 CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
         
-                CGFloat value = size.width / size.height;
+                CGFloat value = image.size.width / image.size.height;
 
 //    CGFloat dif = fmin(((CGFloat)size.height / (CGFloat)image.size.height), ((CGFloat)size.width / (CGFloat)image.size.width));
 
@@ -114,9 +142,24 @@
                     x -= (width - size.width) / 2;
                 }
 
+    CGFloat value2 = size.width / size.height;
 
+    if (value2 > 1) {
+
+        height *= value2;
+        y -= height / 4;
+    }
+    else if (value2 < 1) {
+
+        width /= value2;
+        x -= width / 4;
+    }
+
+
+    if (conrners) {
     [[UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
                                 cornerRadius:5.0] addClip];
+    }
                 [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
         
                 UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();

@@ -11,7 +11,7 @@
 @interface NHMultiImageView : UIView
 
 @property (nonatomic, assign) NSUInteger imageCount;
-
+@property (nonatomic, assign) UIEdgeInsets contentInsets;
 @property (nonatomic, strong) UIColor *imageBackgroundColor;
 
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;
