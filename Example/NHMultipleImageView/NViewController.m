@@ -7,6 +7,7 @@
 //
 
 #import "NViewController.h"
+#import <NHMultiImageView.h>
 
 @interface NViewController ()
 
@@ -18,6 +19,13 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
+
+    NHMultiImageView *view = [[NHMultiImageView alloc] initWithFrame:CGRectMake(0, 0, 300, 300)];
+
+    [self.view addSubview:view];
+//    view.backgroundColor = [UIColor groupTableViewBackgroundColor];
+    view.imageCount = 1;
+    [view addImage:[UIImage imageNamed:@"img4"] toIndex:0];
 }
 
 - (void)didReceiveMemoryWarning
