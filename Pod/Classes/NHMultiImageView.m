@@ -175,6 +175,18 @@
     [self setNeedsDisplay];
 }
 
+- (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index {
+    if (index > self.imageArray.count) {
+        return;
+    }
+
+    self.imageArray[index] = @{
+                               @"image" : image,
+                               @"contentMode" : @(UIViewContentModeCenter)
+                               };
+    [self setNeedsDisplay];
+}
+
 - (void)setImageArraySize:(NSUInteger)size {
     self.imageArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < size; i++) {
@@ -200,20 +212,13 @@
         || [image isKindOfClass:[NSNull class]]) {
 
         if (self.imageArray.count > 1) {
-            //                    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:5.0];
-
-            //                    [[UIColor blueColor] setFill];
-            //                    [path fill];
 
             [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor])  setFill];
 
-            //                    [path stroke];
-            //                    UIRectFill(imageRect);
 
             [[UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:self.cornerRadius] fill];
         }
         else {
-            //                        path
             [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor])  set];
             UIRectFill(imageRect);
         }
@@ -221,7 +226,9 @@
     }
     else {
 
-        [[self prepareImage:image forSize:imageRect.size useConrners:self.imageArray.count > 1] drawInRect:imageRect];
+        [[self prepareImage:image
+                    forSize:imageRect.size
+                useCornerRadius:self.imageArray.count > 1] drawInRect:imageRect];
     }
 }
 
@@ -256,8 +263,6 @@
     CGFloat lineHeight = (self.textFont ?: [UIFont systemFontOfSize:17]).lineHeight;
     textRect.size.height = lineHeight;
     textRect.origin.y = textRect.origin.y + (placeholderRect.size.height - textRect.size.height) / 2;
-
-
 
     [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - (self.pattern.count - 1))] drawInRect:textRect withAttributes:@{
                                                                                                                  NSFontAttributeName : self.textFont ?: [UIFont systemFontOfSize:17],
@@ -306,51 +311,44 @@
 
 }
 
-- (UIImage*)prepareImage:(UIImage*)image forSize:(CGSize)size useConrners:(BOOL)conrners {
+- (UIImage*)prepareImage:(id)imageData forSize:(CGSize)size useCornerRadius:(BOOL)conrners {
 
+    UIImage *image;
+    UIViewContentMode mode = UIViewContentModeScaleToFill;
 
-//            UIImage *resultImage = [[[self class] shakersCache] objectForKey:cacheKey];
+    if ([imageData isKindOfClass:[UIImage class]]) {
+        image = imageData;
+    }
+    else if ([imageData isKindOfClass:[NSDictionary class]]) {
+        image = imageData[@"image"];
+        mode = [imageData[@"contentMode"] unsignedIntegerValue];
+    }
 
-//            if (resultImage == nil) {
+    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    CGFloat value = image.size.width / image.size.height;
 
+    if (conrners) {
+        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
+        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
+                                                        cornerRadius:self.cornerRadius];
 
-                UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+        path.lineWidth = 0;
+        [path fill];
+        [path addClip];
+    }
+    else {
+        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
+        UIRectFill(CGRectMake(0, 0, floor(size.width), floor(size.height)));
+    }
 
-//                CGContextRef context = UIGraphicsGetCurrentContext();
-
-                //        [[UIColor clearColor] set];
-        
-//                CGContextClearRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-
-//    CGContextSetReg
-
-//    if (conrners) {
-//        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
-//        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
-//                                                        cornerRadius:self.cornerRadius];
-//
-//        [path fill];
-////        [path addClip];
-//    }
-//    else {
-//        [(self.backgroundColor ?: [UIColor whiteColor]) set];
-//        UIRectFill((CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-//                CGContextSetRGBFillColor(context, 0.5, 0.5, 0.5, 1);
-//    CGContextFillRect(context, (CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-//    }
-
-//    [self.backgroundColor set];
-//    UIRectFill((CGRect) { .origin.x = 0, .origin.y = 0, .size = size });
-
-                CGFloat value = image.size.width / image.size.height;
-
-//    CGFloat dif = fmin(((CGFloat)size.height / (CGFloat)image.size.height), ((CGFloat)size.width / (CGFloat)image.size.width));
 
     CGFloat height = size.height;
     CGFloat width = size.width;
                 CGFloat x = 0;
                 CGFloat y = 0;
 
+
+    if (mode != UIViewContentModeCenter) {
 
                 if (value < 1) {
 
@@ -404,25 +402,14 @@
                         x -= (width - size.width) / 2;
                     }
                 }
-
-    
-
-
-
-
-    if (conrners) {
-        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
-                                                        cornerRadius:self.cornerRadius];
-
-        path.lineWidth = 0;
-        [path fill];
-        [path addClip];
     }
     else {
-        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
-        UIRectFill(CGRectMake(x, y, floor(width), floor(height)));
+        x = (size.width - image.size.width) / 2;
+        y = (size.height - image.size.height) / 2;
+        width = image.size.width;
+        height = image.size.height;
     }
+
                 [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
 
                 UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();

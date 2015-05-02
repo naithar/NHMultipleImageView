@@ -27,5 +27,6 @@
 - (void)setImageArraySize:(NSUInteger)size;
 - (void)addImage:(UIImage *)image;
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;
+- (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index;
 
 @end

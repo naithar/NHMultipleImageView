@@ -15,6 +15,7 @@
 
     [self.multiImageView setTranslatesAutoresizingMaskIntoConstraints:NO];
     self.multiImageView.cornerRadius = 10;
+    self.multiImageView.backgroundColor = [UIColor whiteColor];
     self.multiImageView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
