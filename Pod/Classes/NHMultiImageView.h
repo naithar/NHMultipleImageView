@@ -23,6 +23,7 @@
 @property (nonatomic, strong) UIColor *textContainerBorderColor;
 @property (nonatomic, assign) CGFloat textContainerBorderWidth;
 
+- (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;
 - (void)addImage:(UIImage *)image;
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;

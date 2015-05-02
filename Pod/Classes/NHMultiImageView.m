@@ -155,6 +155,11 @@
 
 }
 
+- (void)changePatternTo:(NSArray*)pattern {
+    self.pattern = pattern;
+    [self setNeedsDisplay];
+}
+
 - (void)addImage:(UIImage *)image {
     [self.imageArray addObject:image];
     [self setNeedsDisplay];
@@ -218,7 +223,14 @@
 }
 
 - (void)drawCountPlaceholderAtImageRect:(CGRect)imageRect {
-    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:imageRect cornerRadius:self.cornerRadius];
+
+    CGRect placeholderRect = UIEdgeInsetsInsetRect(imageRect, UIEdgeInsetsMake(
+                                                                               self.textContainerBorderWidth /2,
+                                                                               self.textContainerBorderWidth /2,
+                                                                               self.textContainerBorderWidth /2,
+                                                                               self.textContainerBorderWidth /2));
+
+    UIBezierPath* path = [UIBezierPath bezierPathWithRoundedRect:placeholderRect cornerRadius:self.cornerRadius];
 
     //                    [[UIColor blueColor] setFill];
     //                    [path fill];
@@ -237,14 +249,14 @@
     paragraphStyle.alignment = NSTextAlignmentCenter;
     paragraphStyle.lineBreakMode = NSLineBreakByTruncatingTail;
 
-    CGRect textRect = imageRect;
+    CGRect textRect = placeholderRect;
     CGFloat lineHeight = (self.textFont ?: [UIFont systemFontOfSize:17]).lineHeight;
     textRect.size.height = lineHeight;
-    textRect.origin.y = textRect.origin.y + (imageRect.size.height - textRect.size.height) / 2;
+    textRect.origin.y = textRect.origin.y + (placeholderRect.size.height - textRect.size.height) / 2;
 
 
 
-    [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - 5)] drawInRect:textRect withAttributes:@{
+    [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - (self.pattern.count - 1))] drawInRect:textRect withAttributes:@{
                                                                                                                  NSFontAttributeName : self.textFont ?: [UIFont systemFontOfSize:17],
                                                                                                                  NSForegroundColorAttributeName: self.textColor ?: [UIColor blackColor],
                                                                                                                  NSParagraphStyleAttributeName : paragraphStyle
