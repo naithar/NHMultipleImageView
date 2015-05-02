@@ -18,10 +18,12 @@
     self.multiImageView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
+    [self.multiImageView setImageArraySize:15];
     [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:0];
 
     [self.multiImageView addImage:[NSNull null] toIndex:1];
     //
+        [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:2];
     [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:3];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:4];
@@ -32,7 +34,7 @@
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:9];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:10];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:11];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
+
 
     self.multiImageView.textContainerBorderWidth = 5;
     self.multiImageView.textFont = [UIFont boldSystemFontOfSize:20];

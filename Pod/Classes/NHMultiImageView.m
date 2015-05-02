@@ -170,6 +170,11 @@
     [self setNeedsDisplay];
 }
 
+- (void)setImageArraySize:(NSUInteger)size {
+    self.imageArray = [[NSMutableArray alloc] initWithCapacity:size];
+    [self setNeedsDisplay];
+}
+
 - (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect {
     CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
     CGSize patternSize = [pattern[@"size"] CGSizeValue];
@@ -252,7 +257,7 @@
 
     CGRect contentRect = UIEdgeInsetsInsetRect(rect, self.contentInsets);
 
-    if (self.imageArray.count > 0 && self.imageArray.count <= 6) {
+    if (self.imageArray.count > 0 && self.imageArray.count <= (self.pattern.count + 1)) {
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
@@ -266,15 +271,15 @@
         }];
         
     }
-    else if (self.imageArray.count > 6) {
-        NSArray *currentPattern = self.pattern[5];
+    else if (self.imageArray.count > (self.pattern.count + 1)) {
+        NSArray *currentPattern = self.pattern[self.pattern.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
 
 
             CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
-            if (idx >= 5) {
+            if (idx >= self.pattern.count - 1) {
                 [self drawCountPlaceholderAtImageRect:imageRect];
             }
             else {
