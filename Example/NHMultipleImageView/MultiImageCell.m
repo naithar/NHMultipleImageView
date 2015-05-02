@@ -20,6 +20,7 @@
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
     [self.multiImageView setImageArraySize:15];
+    self.multiImageView.maxImageCount = 3;
     [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:0];
 
     [self.multiImageView addImage:[NSNull null] toIndex:1];

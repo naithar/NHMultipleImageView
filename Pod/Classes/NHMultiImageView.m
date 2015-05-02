@@ -264,7 +264,16 @@
     textRect.size.height = lineHeight;
     textRect.origin.y = textRect.origin.y + (placeholderRect.size.height - textRect.size.height) / 2;
 
-    [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - (self.pattern.count - 1))] drawInRect:textRect withAttributes:@{
+    NSInteger minCount;
+
+    if (self.maxImageCount > 0) {
+        minCount = MIN(self.maxImageCount, self.pattern.count);
+    }
+    else {
+        minCount = self.pattern.count;
+    }
+
+    [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - (minCount - 1))] drawInRect:textRect withAttributes:@{
                                                                                                                  NSFontAttributeName : self.textFont ?: [UIFont systemFontOfSize:17],
                                                                                                                  NSForegroundColorAttributeName: self.textColor ?: [UIColor blackColor],
                                                                                                                  NSParagraphStyleAttributeName : paragraphStyle
@@ -277,7 +286,17 @@
 
     CGRect contentRect = UIEdgeInsetsInsetRect(rect, self.contentInsets);
 
-    if (self.imageArray.count > 0 && self.imageArray.count <= (self.pattern.count + 1)) {
+    NSInteger minCount;
+
+    if (self.maxImageCount > 0) {
+        minCount = MIN(self.maxImageCount, self.pattern.count);
+    }
+    else {
+        minCount = self.pattern.count;
+    }
+
+    if (self.imageArray.count > 0
+        && self.imageArray.count <= minCount) {
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
@@ -289,17 +308,16 @@
             [self drawImage:self.imageArray[idx] inRect:imageRect];
 
         }];
-        
     }
-    else if (self.imageArray.count > (self.pattern.count + 1)) {
-        NSArray *currentPattern = self.pattern[self.pattern.count - 1];
+    else if (self.imageArray.count > minCount) {
+        NSArray *currentPattern = self.pattern[minCount - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
 
 
             CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
-            if (idx >= self.pattern.count - 1) {
+            if (idx >= minCount - 1) {
                 [self drawCountPlaceholderAtImageRect:imageRect];
             }
             else {
@@ -489,5 +507,14 @@
     _textContainerBackgroundColor = textContainerBackgroundColor;
     [self didChangeValueForKey:@"textContainerBackgroundColor"];
     [self setNeedsDisplay];
+}
+
+- (void)setMaxImageCount:(NSUInteger)maxImageCount {
+    if (_maxImageCount != maxImageCount) {
+        [self willChangeValueForKey:@"maxImageCount"];
+        _maxImageCount = maxImageCount;
+        [self didChangeValueForKey:@"maxImageCount"];
+        [self setNeedsDisplay];
+    }
 }
 @end

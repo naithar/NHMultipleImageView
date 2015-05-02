@@ -10,7 +10,8 @@
 
 @interface NHMultiImageView : UIView
 
-//@property (nonatomic, assign) NSUInteger imageCount;
+@property (nonatomic, assign) NSUInteger maxImageCount;
+
 @property (nonatomic, assign) UIEdgeInsets contentInsets;
 @property (nonatomic, assign) UIEdgeInsets imageInsets;
 @property (nonatomic, strong) UIColor *imageBackgroundColor;
