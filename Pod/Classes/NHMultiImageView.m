@@ -176,7 +176,10 @@
 }
 
 - (void)setImageArraySize:(NSUInteger)size {
-    self.imageArray = [[NSMutableArray alloc] initWithCapacity:size];
+    self.imageArray = [[NSMutableArray alloc] init];
+    for (int i = 0; i < size; i++) {
+        [self.imageArray addObject:[NSNull null]];
+    }
     [self setNeedsDisplay];
 }
 
