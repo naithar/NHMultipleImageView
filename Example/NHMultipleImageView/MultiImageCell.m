@@ -34,6 +34,9 @@
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:11];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
 
+    self.multiImageView.textContainerBorderWidth = 5;
+    self.multiImageView.textFont = [UIFont boldSystemFontOfSize:20];
+
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 5), dispatch_get_main_queue(), ^{
         [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:1];

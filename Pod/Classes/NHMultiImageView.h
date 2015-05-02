@@ -19,6 +19,9 @@
 
 @property (nonatomic, strong) UIFont *textFont;
 @property (nonatomic, strong) UIColor *textColor;
+@property (nonatomic, strong) UIColor *textContainerBackgroundColor;
+@property (nonatomic, strong) UIColor *textContainerBorderColor;
+@property (nonatomic, assign) CGFloat textContainerBorderWidth;
 
 - (void)addImage:(UIImage *)image;
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;

@@ -148,6 +148,7 @@
     _imageInsets = UIEdgeInsetsZero;
     _imageArray = [[NSMutableArray alloc] init];
     _pattern = [[self class] defaultPattern];
+    _textContainerBorderWidth = 0;
 
     self.opaque = YES;
     self.clipsToBounds = YES;
@@ -217,10 +218,13 @@
     //                    [[UIColor blueColor] setFill];
     //                    [path fill];
 
-    [[UIColor redColor] setFill];
+        path.lineWidth = self.textContainerBorderWidth;
+    [(self.textContainerBorderColor ?: [UIColor blackColor]) setStroke];
+    [(self.textContainerBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
 
-    //                    [path stroke];
+                        [path stroke];
     //                    UIRectFill(imageRect);
+
 
     [path fill];
 
@@ -457,5 +461,26 @@
     if (self.imageArray.count > 6) {
         [self setNeedsDisplay];
     }
+}
+
+- (void)setTextContainerBorderColor:(UIColor *)textContainerBorderColor {
+    [self willChangeValueForKey:@"textContainerBorderColor"];
+    _textContainerBorderColor = textContainerBorderColor;
+    [self didChangeValueForKey:@"textContainerBorderColor"];
+    [self setNeedsDisplay];
+}
+
+- (void)setTextContainerBorderWidth:(CGFloat)textContainerBorderWidth {
+    [self willChangeValueForKey:@"textContainerBorderWidth"];
+    _textContainerBorderWidth = textContainerBorderWidth;
+    [self didChangeValueForKey:@"textContainerBorderWidth"];
+    [self setNeedsDisplay];
+}
+
+- (void)setTextContainerBackgroundColor:(UIColor *)textContainerBackgroundColor {
+    [self willChangeValueForKey:@"textContainerBackgroundColor"];
+    _textContainerBackgroundColor = textContainerBackgroundColor;
+    [self didChangeValueForKey:@"textContainerBackgroundColor"];
+    [self setNeedsDisplay];
 }
 @end
