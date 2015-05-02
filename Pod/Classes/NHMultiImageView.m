@@ -17,97 +17,51 @@
 
 @implementation NHMultiImageView
 
++ (NSArray*)createPatternFromJSON:(id)json {
+    NSMutableArray *resultArray = [[NSMutableArray alloc] init];
+
+    [json[@"pattern"] enumerateObjectsUsingBlock:^(NSArray *obj, NSUInteger idx, BOOL *stop) {
+        NSMutableArray *innerArray = [[NSMutableArray alloc] init];
+
+        [obj enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            [innerArray addObject:@{
+                                    @"origin" : [NSValue
+                                                 valueWithCGPoint:CGPointMake(
+                                                                              [obj[@"origin"][0] floatValue],
+                                                                              [obj[@"origin"][1] floatValue])],
+                                    @"size" : [NSValue
+                                               valueWithCGPoint:CGPointMake(
+                                                                            [obj[@"size"][0] floatValue],
+                                                                            [obj[@"size"][1] floatValue])],
+                                    }];
+        }];
+
+        [resultArray addObject:innerArray];
+    }];
+
+    return resultArray;
+}
+
 + (NSArray*)defaultPattern {
     static dispatch_once_t token;
     __strong static NSArray* instance = nil;
     dispatch_once(&token, ^{
 
-    instance = @[
-      @[@{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(1, 1)]
-            }], //1
-      @[@{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-            }], //2
-      @[@{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-            }], //3
-      @[@{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0.5)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.5)]
-            }], //4
-      @[@{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            }], //5
-      @[@{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 1)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.25)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.5)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.5, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.5, 0.75)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
-            },
-        @{
-            @"origin" : [NSValue valueWithCGPoint:CGPointMake(0.75, 0.75)],
-            @"size" : [NSValue valueWithCGSize:CGSizeMake(0.25, 0.25)]
-            }], //6
-      ];
+        NSString *bundlePath = [[NSBundle bundleForClass:[NHMultiImageView class]]
+                                pathForResource:@"NHMultipleImageView"
+                                ofType:@"bundle"];
+
+        NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+
+        NSData *patternData = [NSData dataWithContentsOfFile:[bundle
+                                                              pathForResource:@"NHMultiImagePattern"
+                                                              ofType:@"json"]];
+
+        id result = [NSJSONSerialization JSONObjectWithData:patternData
+                                                    options:0
+                                                      error:nil];
+
+        instance = [self createPatternFromJSON:result];
 
     });
 
@@ -167,7 +121,7 @@
 
 - (void)addImage:(UIImage*)image
          toIndex:(NSInteger)index {
-    if (index > self.imageArray.count) {
+    if (index >= self.imageArray.count) {
         return;
     }
 
@@ -176,7 +130,7 @@
 }
 
 - (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index {
-    if (index > self.imageArray.count) {
+    if (index >= self.imageArray.count) {
         return;
     }
 
@@ -379,7 +333,7 @@
                         y -= (height - size.height) / 2;
 
                         height *= value2;
-                        y -= height / 4;
+                        y -= (height - size.height) / 2;
                     }
                     else if (value2 < 1) {
 
@@ -413,7 +367,7 @@
                         x -= (width - size.width) / 2;
 
                         width /= value2;
-                        x -= width / 4;
+                        x -= (width - size.width) / 2;
                     }
                     else {
                         width *= value;
