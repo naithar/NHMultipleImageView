@@ -10,13 +10,13 @@
 Pod::Spec.new do |s|
   s.name             = "NHMultipleImageView"
   s.version          = "0.1.0"
-  s.summary          = "A short description of NHMultipleImageView."
-  s.description      = <<-DESC
-                       An optional longer description of NHMultipleImageView
-
-                       * Markdown format.
-                       * Don't worry about the indent, we strip it!
-                       DESC
+  s.summary          = "Custom view for displaying multiple images"
+#  s.description      = <<-DESC
+#                       An optional longer description of NHMultipleImageView
+#
+#                       * Markdown format.
+#                       * Don't worry about the indent, we strip it!
+#                       DESC
   s.homepage         = "https://github.com/<GITHUB_USERNAME>/NHMultipleImageView"
   # s.screenshots     = "www.example.com/screenshots_1", "www.example.com/screenshots_2"
   s.license          = 'MIT'
