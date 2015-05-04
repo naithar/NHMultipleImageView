@@ -13,6 +13,9 @@
 @property (nonatomic, strong) NSMutableArray *imageArray;
 
 @property (nonatomic, strong) NSArray *pattern;
+
+@property (nonatomic, assign) CGRect selectedRect;
+
 @end
 
 @implementation NHMultiImageView
@@ -103,6 +106,7 @@
     _imageArray = [[NSMutableArray alloc] init];
     _pattern = [[self class] defaultPattern];
     _textContainerBorderWidth = 0;
+    _selectedRect = CGRectNull;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -113,26 +117,89 @@
 
 }
 
+- (BOOL)findSelectedRectWithTouches:(NSSet*)touches {
+    __block BOOL returnValue = NO;
+    CGPoint selectedPoint = [((UITouch*)touches.anyObject) locationInView:self];
+    CGPoint previousSelectedPoint = [((UITouch*)touches.anyObject) previousLocationInView:self];
+
+    if (CGPointEqualToPoint(selectedPoint, previousSelectedPoint)
+        && !CGRectIsNull(self.selectedRect)) {
+        return NO;
+    }
+
+    CGRect contentRect = UIEdgeInsetsInsetRect(self.bounds, self.contentInsets);
+
+    NSInteger minCount;
+
+    if (self.maxImageCount > 0) {
+        minCount = MIN(self.maxImageCount, self.pattern.count);
+    }
+    else {
+        minCount = self.pattern.count;
+    }
+
+    if (self.imageArray.count > 0
+        && self.imageArray.count <= minCount) {
+        NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
+
+        [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+
+            if (CGRectContainsPoint(imageRect, selectedPoint)
+                && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
+                self.selectedRect = imageRect;
+                returnValue = YES;
+                *stop = YES;
+            }
+        }];
+    }
+    else if (self.imageArray.count > minCount) {
+        NSArray *currentPattern = self.pattern[minCount - 1];
+
+        [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+
+            if (CGRectContainsPoint(imageRect, selectedPoint)
+                && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
+                self.selectedRect = imageRect;
+                returnValue = YES;
+                *stop = YES;
+            }
+        }];
+    }
+
+    return returnValue;
+}
+
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
-    self.alpha = 0.5;
+
+    if ([self findSelectedRectWithTouches:touches]) {
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesMoved:touches withEvent:event];
+
+    if ([self findSelectedRectWithTouches:touches]) {
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
 
-    self.alpha = 1;
+    self.selectedRect = CGRectNull;
+    [self setNeedsDisplay];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
 
-    self.alpha = 1;
+    self.selectedRect = CGRectNull;
+    [self setNeedsDisplay];
 }
 
 - (void)changePatternTo:(NSArray*)pattern {
@@ -280,9 +347,6 @@
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-
-
-
             CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
             [self drawImage:self.imageArray[idx] inRect:imageRect];
@@ -305,6 +369,16 @@
             }
 
         }];
+    }
+
+    if (!CGRectIsNull(self.selectedRect)) {
+
+        [[UIBezierPath bezierPathWithRoundedRect:self.selectedRect cornerRadius:self.cornerRadius] addClip];
+        CGContextRef context = UIGraphicsGetCurrentContext();
+        [[[UIColor greenColor] colorWithAlphaComponent:0.5] setFill];
+        CGContextFillRect(context, self.selectedRect);
+
+
     }
 
 }
