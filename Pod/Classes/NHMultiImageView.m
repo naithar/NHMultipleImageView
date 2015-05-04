@@ -104,9 +104,35 @@
     _pattern = [[self class] defaultPattern];
     _textContainerBorderWidth = 0;
 
+    self.multipleTouchEnabled = NO;
+    self.userInteractionEnabled = YES;
+
+
     self.opaque = YES;
     self.clipsToBounds = YES;
 
+}
+
+- (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesBegan:touches withEvent:event];
+
+    self.alpha = 0.5;
+}
+
+- (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesMoved:touches withEvent:event];
+}
+
+- (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+
+    self.alpha = 1;
+}
+
+- (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
+    [super touchesEnded:touches withEvent:event];
+
+    self.alpha = 1;
 }
 
 - (void)changePatternTo:(NSArray*)pattern {
