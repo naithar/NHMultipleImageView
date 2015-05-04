@@ -8,7 +8,15 @@
 
 #import "MultiImageCell.h"
 
+@interface MultiImageCell ()<NHMultiImageViewDelegate>
+
+@end
+
 @implementation MultiImageCell
+
+- (void)multiImageView:(NHMultiImageView *)view didSelectIndex:(NSInteger)index {
+    NSLog(@"selected = %d", index);
+}
 
 - (void)awakeFromNib {
     // Initialization code
@@ -24,6 +32,8 @@
     [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:0];
 
     [self.multiImageView addImage:[NSNull null] toIndex:1];
+    self.multiImageView.delegate = self;
+    self.multiImageView.selectionColor = [[UIColor redColor] colorWithAlphaComponent:0.3];
     //
         [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:2];

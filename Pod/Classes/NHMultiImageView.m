@@ -15,6 +15,7 @@
 @property (nonatomic, strong) NSArray *pattern;
 
 @property (nonatomic, assign) CGRect selectedRect;
+@property (nonatomic, assign) NSInteger selectedIndex;
 
 @end
 
@@ -107,6 +108,7 @@
     _pattern = [[self class] defaultPattern];
     _textContainerBorderWidth = 0;
     _selectedRect = CGRectNull;
+    _selectedIndex = -1;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -138,6 +140,8 @@
         minCount = self.pattern.count;
     }
 
+    self.selectedIndex = -1;
+
     if (self.imageArray.count > 0
         && self.imageArray.count <= minCount) {
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
@@ -148,6 +152,7 @@
             if (CGRectContainsPoint(imageRect, selectedPoint)
                 && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
                 self.selectedRect = imageRect;
+                self.selectedIndex = idx;
                 returnValue = YES;
                 *stop = YES;
             }
@@ -162,6 +167,7 @@
             if (CGRectContainsPoint(imageRect, selectedPoint)
                 && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
                 self.selectedRect = imageRect;
+                self.selectedIndex = idx;
                 returnValue = YES;
                 *stop = YES;
             }
@@ -173,7 +179,6 @@
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
-
 
     if ([self findSelectedRectWithTouches:touches]) {
         [self setNeedsDisplay];
@@ -191,13 +196,23 @@
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
 
+    __weak __typeof(self) weakSelf = self;
+    if (self.selectedIndex != -1
+        && [weakSelf.delegate respondsToSelector:@selector(multiImageView:didSelectIndex:)]) {
+        [weakSelf.delegate multiImageView:weakSelf didSelectIndex:self.selectedIndex];
+    }
+
+    self.selectedIndex = -1;
     self.selectedRect = CGRectNull;
     [self setNeedsDisplay];
+
+
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesEnded:touches withEvent:event];
 
+    self.selectedIndex = -1;
     self.selectedRect = CGRectNull;
     [self setNeedsDisplay];
 }
@@ -602,7 +617,10 @@
         [self willChangeValueForKey:@"selectionColor"];
         _selectionColor = selectionColor;
         [self didChangeValueForKey:@"selectionColor"];
-        [self setNeedsDisplay];
+
+        if (!CGRectIsNull(self.selectedRect)) {
+            [self setNeedsDisplay];
+        }
     }
 }
 @end

@@ -8,7 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+@class NHMultiImageView;
+
+@protocol NHMultiImageViewDelegate <NSObject>
+
+@optional
+- (void)multiImageView:(NHMultiImageView*)view didSelectIndex:(NSInteger)index;
+
+@end
+
 @interface NHMultiImageView : UIView
+
+@property (nonatomic, weak) id<NHMultiImageViewDelegate> delegate;
 
 @property (nonatomic, assign) NSUInteger maxImageCount;
 
