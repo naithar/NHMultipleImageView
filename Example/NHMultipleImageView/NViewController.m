@@ -32,6 +32,7 @@
 
     self.tableView.rowHeight = 320;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleSingleLine;
+    self.tableView.delaysContentTouches = YES;
     [self.tableView registerNib:[UINib nibWithNibName:@"MultiImageCell" bundle:nil] forCellReuseIdentifier:@"cell"];
     self.tableView.dataSource = self;
 

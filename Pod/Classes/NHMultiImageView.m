@@ -373,9 +373,11 @@
 
     if (!CGRectIsNull(self.selectedRect)) {
 
-        [[UIBezierPath bezierPathWithRoundedRect:self.selectedRect cornerRadius:self.cornerRadius] addClip];
+        if (self.imageArray.count > 1) {
+            [[UIBezierPath bezierPathWithRoundedRect:self.selectedRect cornerRadius:self.cornerRadius] addClip];
+        }
         CGContextRef context = UIGraphicsGetCurrentContext();
-        [[[UIColor greenColor] colorWithAlphaComponent:0.5] setFill];
+        [(self.selectionColor ?: [[UIColor blackColor] colorWithAlphaComponent:0.35]) setFill];
         CGContextFillRect(context, self.selectedRect);
 
 
@@ -528,7 +530,32 @@
     [self willChangeValueForKey:@"textFont"];
     _textFont = textFont;
     [self didChangeValueForKey:@"textFont"];
-    if (self.imageArray.count > 6) {
+
+    NSInteger minCount;
+
+    if (self.maxImageCount > 0) {
+        minCount = MIN(self.maxImageCount, self.pattern.count);
+    }
+    else {
+        minCount = self.pattern.count;
+    }
+
+    if (self.imageArray.count > minCount) {
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setNeedsDisplayForTextContainer {
+    NSInteger minCount;
+
+    if (self.maxImageCount > 0) {
+        minCount = MIN(self.maxImageCount, self.pattern.count);
+    }
+    else {
+        minCount = self.pattern.count;
+    }
+
+    if (self.imageArray.count > minCount) {
         [self setNeedsDisplay];
     }
 }
@@ -537,30 +564,28 @@
     [self willChangeValueForKey:@"textColor"];
     _textColor = textColor;
     [self didChangeValueForKey:@"textColor"];
-    if (self.imageArray.count > 6) {
-        [self setNeedsDisplay];
-    }
+    [self setNeedsDisplayForTextContainer];
 }
 
 - (void)setTextContainerBorderColor:(UIColor *)textContainerBorderColor {
     [self willChangeValueForKey:@"textContainerBorderColor"];
     _textContainerBorderColor = textContainerBorderColor;
     [self didChangeValueForKey:@"textContainerBorderColor"];
-    [self setNeedsDisplay];
+    [self setNeedsDisplayForTextContainer];
 }
 
 - (void)setTextContainerBorderWidth:(CGFloat)textContainerBorderWidth {
     [self willChangeValueForKey:@"textContainerBorderWidth"];
     _textContainerBorderWidth = textContainerBorderWidth;
     [self didChangeValueForKey:@"textContainerBorderWidth"];
-    [self setNeedsDisplay];
+    [self setNeedsDisplayForTextContainer];
 }
 
 - (void)setTextContainerBackgroundColor:(UIColor *)textContainerBackgroundColor {
     [self willChangeValueForKey:@"textContainerBackgroundColor"];
     _textContainerBackgroundColor = textContainerBackgroundColor;
     [self didChangeValueForKey:@"textContainerBackgroundColor"];
-    [self setNeedsDisplay];
+    [self setNeedsDisplayForTextContainer];
 }
 
 - (void)setMaxImageCount:(NSUInteger)maxImageCount {
@@ -568,6 +593,15 @@
         [self willChangeValueForKey:@"maxImageCount"];
         _maxImageCount = maxImageCount;
         [self didChangeValueForKey:@"maxImageCount"];
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setSelectionColor:(UIColor *)selectionColor {
+    if (_selectionColor != selectionColor) {
+        [self willChangeValueForKey:@"selectionColor"];
+        _selectionColor = selectionColor;
+        [self didChangeValueForKey:@"selectionColor"];
         [self setNeedsDisplay];
     }
 }
