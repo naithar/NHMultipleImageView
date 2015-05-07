@@ -147,9 +147,7 @@
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect
-                                               index:idx
-                                               count:currentPattern.count];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
             if (CGRectContainsPoint(imageRect, selectedPoint)
                 && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
@@ -164,9 +162,7 @@
         NSArray *currentPattern = self.pattern[minCount - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect
-                                               index:idx
-                                               count:currentPattern.count];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
             if (CGRectContainsPoint(imageRect, selectedPoint)
                 && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
@@ -261,14 +257,21 @@
     [self setNeedsDisplay];
 }
 
-- (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect index:(NSInteger)index count:(NSInteger)count {
+- (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect {
     CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
     CGSize patternSize = [pattern[@"size"] CGSizeValue];
 
-    CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + (index != 0 ? self.imageInsets.left : 0),
-                                  self.contentInsets.top + patternOrigin.y * contentRect.size.height + (index != 0 ? self.imageInsets.top : 0),
-                                  patternSize.width * contentRect.size.width - self.imageInsets.left - (index != count - 1 ? self.imageInsets.right : 0),
-                                  patternSize.height * contentRect.size.height - self.imageInsets.top - (index != count - 1 ? self.imageInsets.bottom : 0));
+    CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width,
+                                  self.contentInsets.top + patternOrigin.y * contentRect.size.height,
+                                  patternSize.width * contentRect.size.width - self.imageInsets.left,
+                                  patternSize.height * contentRect.size.height - self.imageInsets.top);
+
+    imageRect = UIEdgeInsetsInsetRect(
+                                      imageRect,
+                                      UIEdgeInsetsMake(imageRect.origin.y == self.contentInsets.top ? 0 : self.imageInsets.top,
+                                                       imageRect.origin.x == self.contentInsets.left ? 0 : self.imageInsets.left,
+                                                       CGRectGetMaxY(imageRect) == contentRect.size.height ? 0 : self.imageInsets.bottom,
+                                                       CGRectGetMaxX(imageRect) == contentRect.size.width ? 0 : self.imageInsets.right));
 
     return imageRect;
 }
@@ -366,10 +369,7 @@
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            CGRect imageRect = [self rectFromPattern:obj
-                                      andContentRect:contentRect
-                                               index:idx
-                                               count:currentPattern.count];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
             [self drawImage:self.imageArray[idx] inRect:imageRect];
 
@@ -381,9 +381,7 @@
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
 
 
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect
-                                               index:idx
-                                               count:currentPattern.count];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
 
             if (idx >= minCount - 1) {
                 [self drawCountPlaceholderAtImageRect:imageRect];
