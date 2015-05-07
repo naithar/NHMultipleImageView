@@ -147,7 +147,9 @@
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect
+                                               index:idx
+                                               count:currentPattern.count];
 
             if (CGRectContainsPoint(imageRect, selectedPoint)
                 && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
@@ -162,7 +164,9 @@
         NSArray *currentPattern = self.pattern[minCount - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect
+                                               index:idx
+                                               count:currentPattern.count];
 
             if (CGRectContainsPoint(imageRect, selectedPoint)
                 && (!CGRectEqualToRect(imageRect, self.selectedRect))) {
@@ -257,14 +261,14 @@
     [self setNeedsDisplay];
 }
 
-- (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect {
+- (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect index:(NSInteger)index count:(NSInteger)count {
     CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
     CGSize patternSize = [pattern[@"size"] CGSizeValue];
 
-    CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + self.imageInsets.left,
-                                  self.contentInsets.top + patternOrigin.y * contentRect.size.height + self.imageInsets.top,
-                                  patternSize.width * contentRect.size.width - self.imageInsets.left - self.imageInsets.right,
-                                  patternSize.height * contentRect.size.height - self.imageInsets.top - self.imageInsets.bottom);
+    CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width + (index != 0 ? self.imageInsets.left : 0),
+                                  self.contentInsets.top + patternOrigin.y * contentRect.size.height + (index != 0 ? self.imageInsets.top : 0),
+                                  patternSize.width * contentRect.size.width - self.imageInsets.left - (index != count - 1 ? self.imageInsets.right : 0),
+                                  patternSize.height * contentRect.size.height - self.imageInsets.top - (index != count - 1 ? self.imageInsets.bottom : 0));
 
     return imageRect;
 }
@@ -290,7 +294,7 @@
 
         [[self prepareImage:image
                     forSize:imageRect.size
-                useCornerRadius:self.imageArray.count > 1] drawInRect:imageRect];
+            useCornerRadius:self.imageArray.count > 1] drawInRect:imageRect];
     }
 }
 
@@ -307,11 +311,11 @@
     //                    [[UIColor blueColor] setFill];
     //                    [path fill];
 
-        path.lineWidth = self.textContainerBorderWidth;
+    path.lineWidth = self.textContainerBorderWidth;
     [(self.textContainerBorderColor ?: [UIColor blackColor]) setStroke];
     [(self.textContainerBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
 
-                        [path stroke];
+    [path stroke];
     //                    UIRectFill(imageRect);
 
 
@@ -336,10 +340,10 @@
     }
 
     [[NSString stringWithFormat:@"+%ld", (long)(self.imageArray.count - (minCount - 1))] drawInRect:textRect withAttributes:@{
-                                                                                                                 NSFontAttributeName : self.textFont ?: [UIFont systemFontOfSize:17],
-                                                                                                                 NSForegroundColorAttributeName: self.textColor ?: [UIColor blackColor],
-                                                                                                                 NSParagraphStyleAttributeName : paragraphStyle
-                                                                                                                 }];
+                                                                                                                              NSFontAttributeName : self.textFont ?: [UIFont systemFontOfSize:17],
+                                                                                                                              NSForegroundColorAttributeName: self.textColor ?: [UIColor blackColor],
+                                                                                                                              NSParagraphStyleAttributeName : paragraphStyle
+                                                                                                                              }];
 }
 
 - (void)drawRect:(CGRect)rect {
@@ -362,7 +366,10 @@
         NSArray *currentPattern = self.pattern[self.imageArray.count - 1];
 
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+            CGRect imageRect = [self rectFromPattern:obj
+                                      andContentRect:contentRect
+                                               index:idx
+                                               count:currentPattern.count];
 
             [self drawImage:self.imageArray[idx] inRect:imageRect];
 
@@ -374,7 +381,9 @@
         [currentPattern enumerateObjectsUsingBlock:^(NSDictionary *obj, NSUInteger idx, BOOL *stop) {
 
 
-            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect];
+            CGRect imageRect = [self rectFromPattern:obj andContentRect:contentRect
+                                               index:idx
+                                               count:currentPattern.count];
 
             if (idx >= minCount - 1) {
                 [self drawCountPlaceholderAtImageRect:imageRect];
@@ -433,64 +442,64 @@
 
     CGFloat height = size.height;
     CGFloat width = size.width;
-                CGFloat x = 0;
-                CGFloat y = 0;
+    CGFloat x = 0;
+    CGFloat y = 0;
 
 
     if (mode != UIViewContentModeCenter) {
 
-                if (value < 1) {
+        if (value < 1) {
 
 
-                    CGFloat value2 = size.width / size.height;
+            CGFloat value2 = size.width / size.height;
 
-                    if (value2 > 1) {
+            if (value2 > 1) {
 
-                        height /= value;
-                        y -= (height - size.height) / 2;
+                height /= value;
+                y -= (height - size.height) / 2;
 
-                        height *= value2;
-                        y -= (height - size.height) / 2;
-                    }
-                    else if (value2 < 1) {
+                height *= value2;
+                y -= (height - size.height) / 2;
+            }
+            else if (value2 < 1) {
 
-//                                                height /= value;
-                        //                        y -= (height - size.height) / 2;
-                        //
-//                                                width /= value;
-                        //                        x -= width / 4;
-                    }
-                    else {
-                        height /= value;
-                        y -= (height - size.height) / 2;
-                    }
-                }
-                else {
+                //                                                height /= value;
+                //                        y -= (height - size.height) / 2;
+                //
+                //                                                width /= value;
+                //                        x -= width / 4;
+            }
+            else {
+                height /= value;
+                y -= (height - size.height) / 2;
+            }
+        }
+        else {
 
 
-                    CGFloat value2 = size.width / size.height;
+            CGFloat value2 = size.width / size.height;
 
-                    if (value2 > 1) {
+            if (value2 > 1) {
 
-//                        width *= value;
-//                        x -= (width - size.width) / 2;
+                //                        width *= value;
+                //                        x -= (width - size.width) / 2;
 
-//                        height *= value2;
-//                        y -= height / 4;
-                    }
-                    else if (value2 < 1) {
+                //                        height *= value2;
+                //                        y -= height / 4;
+            }
+            else if (value2 < 1) {
 
-                        width *= value;
-                        x -= (width - size.width) / 2;
+                width *= value;
+                x -= (width - size.width) / 2;
 
-                        width /= value2;
-                        x -= (width - size.width) / 2;
-                    }
-                    else {
-                        width *= value;
-                        x -= (width - size.width) / 2;
-                    }
-                }
+                width /= value2;
+                x -= (width - size.width) / 2;
+            }
+            else {
+                width *= value;
+                x -= (width - size.width) / 2;
+            }
+        }
     }
     else {
         x = (size.width - image.size.width) / 2;
@@ -499,18 +508,18 @@
         height = image.size.height;
     }
 
-                [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
+    [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
 
-                UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
-        
-//                [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
+    UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
 
-                UIGraphicsEndImageContext();
-//            }
+    //                [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
 
-//    self
+    UIGraphicsEndImageContext();
+    //            }
 
-            return resultImage;
+    //    self
+
+    return resultImage;
 }
 
 - (void)setCornerRadius:(CGFloat)cornerRadius {
@@ -617,7 +626,7 @@
         [self willChangeValueForKey:@"selectionColor"];
         _selectionColor = selectionColor;
         [self didChangeValueForKey:@"selectionColor"];
-
+        
         if (!CGRectIsNull(self.selectedRect)) {
             [self setNeedsDisplay];
         }
