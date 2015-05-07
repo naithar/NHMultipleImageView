@@ -262,6 +262,10 @@
     [self setNeedsDisplay];
 }
 
+- (NSInteger)currentCount {
+    return self.imageArray.count;
+}
+
 - (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect {
     CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
     CGSize patternSize = [pattern[@"size"] CGSizeValue];
