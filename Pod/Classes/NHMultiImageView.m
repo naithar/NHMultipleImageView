@@ -279,8 +279,8 @@
                                       imageRect,
                                       UIEdgeInsetsMake(imageRect.origin.y == self.contentInsets.top ? 0 : self.imageInsets.top,
                                                        imageRect.origin.x == self.contentInsets.left ? 0 : self.imageInsets.left,
-                                                       CGRectGetMaxY(imageRect) == contentRect.size.height ? 0 : self.imageInsets.bottom,
-                                                       CGRectGetMaxX(imageRect) == contentRect.size.width ? 0 : self.imageInsets.right));
+                                                       CGRectGetMaxY(imageRect) >= contentRect.size.height ? 0 : self.imageInsets.bottom,
+                                                       CGRectGetMaxX(imageRect) >= contentRect.size.width ? 0 : self.imageInsets.right));
 
     return imageRect;
 }
