@@ -257,6 +257,11 @@
     [self setNeedsDisplay];
 }
 
+- (void)clearImageArray {
+    self.imageArray = [[NSMutableArray alloc] init];
+    [self setNeedsDisplay];
+}
+
 - (CGRect)rectFromPattern:(NSDictionary*)pattern andContentRect:(CGRect)contentRect {
     CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
     CGSize patternSize = [pattern[@"size"] CGSizeValue];

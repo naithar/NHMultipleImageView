@@ -41,5 +41,6 @@
 - (void)addImage:(UIImage *)image;
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;
 - (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index;
+- (void)clearImageArray;
 
 @end
