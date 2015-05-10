@@ -245,7 +245,7 @@
 }
 
 - (void)addImage:(UIImage *)image {
-    [self.imageArray addObject:image];
+    [self.imageArray addObject:image ?: [NSNull null]];
     [self setNeedsDisplay];
 }
 
@@ -255,7 +255,7 @@
         return;
     }
 
-    self.imageArray[index] = image;
+    self.imageArray[index] = image ?: [NSNull null];
     [self setNeedsDisplay];
 }
 
@@ -265,7 +265,7 @@
     }
 
     self.imageArray[index] = @{
-                               @"image" : image,
+                               @"image" : image ?: [NSNull null],
                                @"contentMode" : @(UIViewContentModeCenter)
                                };
     [self setNeedsDisplay];
@@ -448,9 +448,12 @@
         mode = [imageData[@"contentMode"] unsignedIntegerValue];
     }
 
-    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:@([image hash])];
+
+
+    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:@([UIImagePNGRepresentation(image) hash])];
 
     if (!resultImage) {
+        NSLog(@"%@", @([UIImagePNGRepresentation(image) hash]));
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
 
 
@@ -530,7 +533,7 @@
 
     resultImage = UIGraphicsGetImageFromCurrentImageContext();
 
-        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:@([image hash])];
+        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:@([UIImagePNGRepresentation(image) hash])];
     //                [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
 
     UIGraphicsEndImageContext();

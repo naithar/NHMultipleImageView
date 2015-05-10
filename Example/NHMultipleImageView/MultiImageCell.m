@@ -27,7 +27,7 @@
     self.multiImageView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
-    [self.multiImageView setImageArraySize:15];
+    [self.multiImageView setImageArraySize:5];
 //    self.multiImageView.maxImageCount = 3;
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:0];
 
@@ -35,17 +35,16 @@
     self.multiImageView.delegate = self;
     self.multiImageView.selectionColor = [[UIColor redColor] colorWithAlphaComponent:0.3];
     //
-        [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:2];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img3.jpg"] toIndex:3];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:4];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img3.jpg"] toIndex:5];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:6];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:7];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:8];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:9];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:10];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:11];
+
+    [self.multiImageView addImage:[UIImage imageNamed:@"img3.jpg"] toIndex:2];
+
+    NSString *path = [[NSBundle mainBundle] pathsForResourcesOfType:@"jpg" inDirectory:nil].firstObject;
+    UIImage *image = [UIImage imageWithContentsOfFile:path];
+    [self.multiImageView addImage:image toIndex:3];
+
+//    NSString *path = [[NSBundle mainBundle] pathsForResourcesOfType:@"jpg" inDirectory:nil].firstObject;
+    UIImage *image1 = [UIImage imageWithContentsOfFile:path];
+    [self.multiImageView addImage:image1 toIndex:4];
 
 
     self.multiImageView.textContainerBorderWidth = 5;
@@ -54,10 +53,6 @@
 
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 5), dispatch_get_main_queue(), ^{
         [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:1];
-//        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, NSEC_PER_SEC * 5), dispatch_get_main_queue(), ^{
-//            self.multiImageView.backgroundColor = [UIColor redColor];
-//            [self.multiImageView setNeedsDisplay];
-//        });
     });
 }
 
