@@ -29,7 +29,7 @@
 
     [self.multiImageView setImageArraySize:15];
 //    self.multiImageView.maxImageCount = 3;
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:0];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:0];
 
     [self.multiImageView addImage:[NSNull null] toIndex:1];
     self.multiImageView.delegate = self;
@@ -37,15 +37,15 @@
     //
         [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:12];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:2];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:3];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img3.jpg"] toIndex:3];
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:4];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:5];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:6];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:7];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:8];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:9];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:10];
-    [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:11];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img3.jpg"] toIndex:5];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:6];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:7];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:8];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:9];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:10];
+    [self.multiImageView addImage:[UIImage imageNamed:@"img1"] toIndex:11];
 
 
     self.multiImageView.textContainerBorderWidth = 5;

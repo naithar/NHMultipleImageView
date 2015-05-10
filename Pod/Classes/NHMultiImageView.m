@@ -284,7 +284,7 @@
     return imageRect;
 }
 
-- (void)drawImage:(UIImage*)image inRect:(CGRect)imageRect {
+- (void)drawImage:(id)image inRect:(CGRect)imageRect {
     if (!image
         || [image isKindOfClass:[NSNull class]]) {
 
@@ -429,7 +429,7 @@
     }
 
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
-    CGFloat value = image.size.width / image.size.height;
+
 
     if (conrners) {
         [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
@@ -454,58 +454,47 @@
 
     if (mode != UIViewContentModeCenter) {
 
-        if (value < 1) {
+        if (image.size.height) {
+            CGFloat ratio = image.size.width / image.size.height;
 
+            if (ratio) {
+                if (ratio > 1.5) {
+                    if (size.height * ratio > size.width) {
+                        height = size.height;
+                        width = height * ratio;
+                    }
+                    else {
+                        width = size.width;
+                        height = width / ratio;
+                    }
+                }
+                else if (ratio < 0.5) {
+                    if (size.height * ratio > size.width) {
+                        height = size.height;
+                        width = height / ratio;
+                    }
+                    else {
+                        width = size.width;
+                        height = width / ratio;
+                    }
+                }
+                else {
+                    if (size.height * ratio > size.width) {
+                        height = size.height;
+                        width = height * ratio;
+                    }
+                    else {
+                        width = size.width;
+                        height = width / ratio;
+                    }
+                }
 
-            CGFloat value2 = size.width / size.height;
-
-            if (value2 > 1) {
-
-                height /= value;
-                y -= (height - size.height) / 2;
-
-                height *= value2;
-                y -= (height - size.height) / 2;
+                x = (size.width - width) / 2;
+                y = (size.height - height) / 2;
             }
-            else if (value2 < 1) {
-
-                //                                                height /= value;
-                //                        y -= (height - size.height) / 2;
-                //
-                //                                                width /= value;
-                //                        x -= width / 4;
-            }
-            else {
-                height /= value;
-                y -= (height - size.height) / 2;
-            }
+            
         }
-        else {
 
-
-            CGFloat value2 = size.width / size.height;
-
-            if (value2 > 1) {
-
-                //                        width *= value;
-                //                        x -= (width - size.width) / 2;
-
-                //                        height *= value2;
-                //                        y -= height / 4;
-            }
-            else if (value2 < 1) {
-
-                width *= value;
-                x -= (width - size.width) / 2;
-
-                width /= value2;
-                x -= (width - size.width) / 2;
-            }
-            else {
-                width *= value;
-                x -= (width - size.width) / 2;
-            }
-        }
     }
     else {
         x = (size.width - image.size.width) / 2;
