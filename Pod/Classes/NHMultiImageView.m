@@ -270,13 +270,12 @@
     CGPoint patternOrigin = [pattern[@"origin"] CGPointValue];
     CGSize patternSize = [pattern[@"size"] CGSizeValue];
 
-    CGRect imageRect = CGRectMake(self.contentInsets.left + patternOrigin.x * contentRect.size.width,
-                                  self.contentInsets.top + patternOrigin.y * contentRect.size.height,
-                                  patternSize.width * contentRect.size.width - self.imageInsets.left,
-                                  patternSize.height * contentRect.size.height - self.imageInsets.top);
+    CGRect imageRect = CGRectMake(round(self.contentInsets.left + patternOrigin.x * contentRect.size.width),
+                                  round(self.contentInsets.top + patternOrigin.y * contentRect.size.height),
+                                  round(patternSize.width * contentRect.size.width - self.contentInsets.left),
+                                  round(patternSize.height * contentRect.size.height - self.contentInsets.top));
 
-    imageRect = UIEdgeInsetsInsetRect(
-                                      imageRect,
+    imageRect = UIEdgeInsetsInsetRect(imageRect,
                                       UIEdgeInsetsMake(imageRect.origin.y == self.contentInsets.top ? 0 : self.imageInsets.top,
                                                        imageRect.origin.x == self.contentInsets.left ? 0 : self.imageInsets.left,
                                                        CGRectGetMaxY(imageRect) >= contentRect.size.height ? 0 : self.imageInsets.bottom,
