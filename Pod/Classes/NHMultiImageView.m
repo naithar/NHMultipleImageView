@@ -448,12 +448,9 @@
         mode = [imageData[@"contentMode"] unsignedIntegerValue];
     }
 
-
-
     UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:@([UIImagePNGRepresentation(image) hash])];
 
     if (!resultImage) {
-        NSLog(@"%@", @([UIImagePNGRepresentation(image) hash]));
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
 
 
