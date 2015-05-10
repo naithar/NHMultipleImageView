@@ -21,6 +21,28 @@
 
 @implementation NHMultiImageView
 
++ (NSCache*)sharedCache {
+    static dispatch_once_t token;
+    __strong static NSCache *instance = nil;
+    dispatch_once(&token, ^{
+        instance = [[NSCache alloc] init];
+    });
+
+    return instance;
+}
+
++ (void)placeImage:(UIImage*)image inCacheForSize:(CGSize)size withCorners:(BOOL)corners withHash:(id)hash {
+    [[self sharedCache] setObject:image
+                           forKey:[NSString stringWithFormat:@"%@-%@-%@", hash, @(corners), NSStringFromCGSize(size)]];
+}
+
++ (UIImage*)imageFromCacheForSize:(CGSize)size withCorners:(BOOL)corners withHash:(id)hash {
+
+    UIImage *result = [[self sharedCache]
+                       objectForKey:[NSString stringWithFormat:@"%@-%@-%@", hash, @(corners), NSStringFromCGSize(size)]];
+    return result;
+}
+
 + (NSArray*)createPatternFromJSON:(id)json {
     NSMutableArray *resultArray = [[NSMutableArray alloc] init];
 
@@ -409,13 +431,11 @@
         CGContextRef context = UIGraphicsGetCurrentContext();
         [(self.selectionColor ?: [[UIColor blackColor] colorWithAlphaComponent:0.35]) setFill];
         CGContextFillRect(context, self.selectedRect);
-
-
     }
 
 }
 
-- (UIImage*)prepareImage:(id)imageData forSize:(CGSize)size useCornerRadius:(BOOL)conrners {
+- (UIImage*)prepareImage:(id)imageData forSize:(CGSize)size useCornerRadius:(BOOL)corners {
 
     UIImage *image;
     UIViewContentMode mode = UIViewContentModeScaleToFill;
@@ -428,10 +448,13 @@
         mode = [imageData[@"contentMode"] unsignedIntegerValue];
     }
 
+    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:@([image hash])];
+
+    if (!resultImage) {
     UIGraphicsBeginImageContextWithOptions(size, NO, 0);
 
 
-    if (conrners) {
+    if (corners) {
         [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
         UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
                                                         cornerRadius:self.cornerRadius];
@@ -505,14 +528,15 @@
 
     [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
 
-    UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
+    resultImage = UIGraphicsGetImageFromCurrentImageContext();
 
+        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:@([image hash])];
     //                [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
 
     UIGraphicsEndImageContext();
     //            }
 
-    //    self
+    }
 
     return resultImage;
 }
