@@ -7,6 +7,27 @@
 //
 
 #import "NHMultiImageView.h"
+#import <CommonCrypto/CommonDigest.h>
+
+@implementation UIImage (CustomHash)
+
+- (NSString*)cacheHash {
+    unsigned char result[CC_MD5_DIGEST_LENGTH];
+    NSData *imageData = UIImagePNGRepresentation(self);
+    CC_MD5([imageData bytes], (unsigned int)[imageData length], result);
+    NSString *imageHash = [NSString stringWithFormat:
+                           @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+                           result[0], result[1], result[2], result[3],
+                           result[4], result[5], result[6], result[7],
+                           result[8], result[9], result[10], result[11],
+                           result[12], result[13], result[14], result[15]
+                           ];
+
+    return imageHash;
+}
+
+@end
+
 
 @interface  NHMultiImageView ()
 
@@ -448,93 +469,92 @@
         mode = [imageData[@"contentMode"] unsignedIntegerValue];
     }
 
-    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:@([UIImagePNGRepresentation(image) hash])];
+    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash]];
 
     if (!resultImage) {
-    UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+        UIGraphicsBeginImageContextWithOptions(size, NO, 0);
 
 
-    if (corners) {
-        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
-        UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
-                                                        cornerRadius:self.cornerRadius];
+        if (corners) {
+            [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
+            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
+                                                            cornerRadius:self.cornerRadius];
 
-        path.lineWidth = 0;
-        [path fill];
-        [path addClip];
-    }
-    else {
-        [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
-        UIRectFill(CGRectMake(0, 0, floor(size.width), floor(size.height)));
-    }
-
-
-    CGFloat height = size.height;
-    CGFloat width = size.width;
-    CGFloat x = 0;
-    CGFloat y = 0;
+            path.lineWidth = 0;
+            [path fill];
+            [path addClip];
+        }
+        else {
+            [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
+            UIRectFill(CGRectMake(0, 0, floor(size.width), floor(size.height)));
+        }
 
 
-    if (mode != UIViewContentModeCenter) {
+        CGFloat height = size.height;
+        CGFloat width = size.width;
+        CGFloat x = 0;
+        CGFloat y = 0;
 
-        if (image.size.height) {
-            CGFloat ratio = image.size.width / image.size.height;
 
-            if (ratio) {
-                if (ratio > 1.25) {
-                    if (size.height * ratio > size.width) {
-                        height = size.height;
-                        width = height * ratio;
+        if (mode != UIViewContentModeCenter) {
+
+            if (image.size.height) {
+                CGFloat ratio = image.size.width / image.size.height;
+
+                if (ratio) {
+                    if (ratio > 1.25) {
+                        if (size.height * ratio > size.width) {
+                            height = size.height;
+                            width = height * ratio;
+                        }
+                        else {
+                            width = size.width;
+                            height = width / ratio;
+                        }
+                    }
+                    else if (ratio < 0.75) {
+                        if (size.height * ratio > size.width) {
+                            height = size.height;
+                            width = height * ratio;
+                        }
+                        else {
+                            width = size.width;
+                            height = width / ratio;
+                        }
                     }
                     else {
-                        width = size.width;
-                        height = width / ratio;
+                        if (size.height * ratio > size.width) {
+                            width = size.width;
+                            height = width / ratio;
+                        }
+                        else {
+                            height = size.height;
+                            width = height * ratio;
+                        }
                     }
-                }
-                else if (ratio < 0.75) {
-                    if (size.height * ratio > size.width) {
-                        height = size.height;
-                        width = height * ratio;
-                    }
-                    else {
-                        width = size.width;
-                        height = width / ratio;
-                    }
-                }
-                else {
-                    if (size.height * ratio > size.width) {
-                        height = size.height;
-                        width = height * ratio;
-                    }
-                    else {
-                        width = size.width;
-                        height = width / ratio;
-                    }
+
+                    x = (size.width - width) / 2;
+                    y = (size.height - height) / 2;
                 }
 
-                x = (size.width - width) / 2;
-                y = (size.height - height) / 2;
             }
 
         }
+        else {
+            x = (size.width - image.size.width) / 2;
+            y = (size.height - image.size.height) / 2;
+            width = image.size.width;
+            height = image.size.height;
+        }
 
-    }
-    else {
-        x = (size.width - image.size.width) / 2;
-        y = (size.height - image.size.height) / 2;
-        width = image.size.width;
-        height = image.size.height;
-    }
+        [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
 
-    [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
+        resultImage = UIGraphicsGetImageFromCurrentImageContext();
 
-    resultImage = UIGraphicsGetImageFromCurrentImageContext();
+        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash]];
 
-        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:@([UIImagePNGRepresentation(image) hash])];
-    //                [[[self class] shakersCache] setObject:resultImage forKey:cacheKey];
-
-    UIGraphicsEndImageContext();
-    //            }
+        UIGraphicsEndImageContext();
+        //            }
 
     }
 
