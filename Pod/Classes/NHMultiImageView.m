@@ -32,6 +32,7 @@
 @interface  NHMultiImageView ()
 
 @property (nonatomic, strong) NSMutableArray *imageArray;
+@property (nonatomic, strong) NSMutableArray *loadingValueArray;
 
 @property (nonatomic, strong) NSArray *pattern;
 
@@ -148,10 +149,13 @@
     _contentInsets = UIEdgeInsetsZero;
     _imageInsets = UIEdgeInsetsZero;
     _imageArray = [[NSMutableArray alloc] init];
+    _loadingValueArray = [[NSMutableArray alloc] init];
     _pattern = [[self class] defaultPattern];
     _textContainerBorderWidth = 0;
     _selectedRect = CGRectNull;
     _selectedIndex = -1;
+    _loadingIndicatorColor = [UIColor grayColor];
+    _loadingIndicatorWidth = 2;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -267,6 +271,10 @@
 
 - (void)addImage:(UIImage *)image {
     [self.imageArray addObject:image ?: [NSNull null]];
+    [self.loadingValueArray addObject:@{
+                                        @"hidden" : @NO,
+                                        @"value" : @0
+                                        }];
     [self setNeedsDisplay];
 }
 
@@ -294,14 +302,32 @@
 
 - (void)setImageArraySize:(NSUInteger)size {
     self.imageArray = [[NSMutableArray alloc] init];
+    self.loadingValueArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < size; i++) {
         [self.imageArray addObject:[NSNull null]];
+        [self.loadingValueArray addObject:@{
+                                            @"hidden" : @NO,
+                                            @"value" : @0
+                                            }];
     }
+    [self setNeedsDisplay];
+}
+
+- (void)setLoadingValue:(CGFloat)value forIndex:(NSInteger)index {
+    self.loadingValueArray[index][@"value"] = @(value);
+
+    [self setNeedsDisplay];
+}
+
+- (void)setLoadingIndicatorHidden:(BOOL)hidden forIndex:(NSInteger)index {
+    self.loadingValueArray[index][@"hidden"] = @(hidden);
+
     [self setNeedsDisplay];
 }
 
 - (void)clearImageArray {
     self.imageArray = [[NSMutableArray alloc] init];
+    self.loadingValueArray = [[NSMutableArray alloc] init];
     [self setNeedsDisplay];
 }
 
@@ -350,6 +376,40 @@
                     forSize:imageRect.size
             useCornerRadius:self.imageArray.count > 1] drawInRect:imageRect];
     }
+}
+
+- (void)drawLoadingIndicatorForValue:(float)value inRect:(CGRect)imageRect {
+    ///MACircleProgressIndicator
+
+    CGContextRef ctx = UIGraphicsGetCurrentContext();
+    CGPoint center = CGPointMake(imageRect.origin.x + imageRect.size.width/2,
+                                 imageRect.origin.y + imageRect.size.height/2);
+
+    float minSize = MIN(50, MIN(imageRect.size.width - 10, imageRect.size.height - 10));
+    float lineWidth = self.loadingIndicatorWidth;
+    float radius = (minSize-lineWidth)/2;
+    float endAngle = M_PI*(value*2);
+
+    CGContextSaveGState(ctx);
+    CGContextTranslateCTM(ctx, center.x, center.y);
+    CGContextRotateCTM(ctx, -M_PI*0.5);
+
+    CGContextSetLineWidth(ctx, lineWidth);
+    CGContextSetLineCap(ctx, kCGLineCapRound);
+
+    // "Full" Background Circle:
+    CGContextBeginPath(ctx);
+    CGContextAddArc(ctx, 0, 0, radius, 0, 2*M_PI, 0);
+    CGContextSetStrokeColorWithColor(ctx, [self.loadingIndicatorColor colorWithAlphaComponent:0.15].CGColor);
+    CGContextStrokePath(ctx);
+
+    // Progress Arc:
+    CGContextBeginPath(ctx);
+    CGContextAddArc(ctx, 0, 0, radius, 0, endAngle, 0);
+    CGContextSetStrokeColorWithColor(ctx, self.loadingIndicatorColor.CGColor);
+    CGContextStrokePath(ctx);
+
+    CGContextRestoreGState(ctx);
 }
 
 - (void)drawCountPlaceholderAtImageRect:(CGRect)imageRect {
@@ -424,6 +484,13 @@
 
             [self drawImage:self.imageArray[idx] inRect:imageRect];
 
+            id loadingIndicatorData = self.loadingValueArray[idx];
+
+            if (![loadingIndicatorData[@"hidden"] boolValue]) {
+                float loadingValue = [self.loadingValueArray[idx][@"value"] floatValue];
+                [self drawLoadingIndicatorForValue:loadingValue inRect:imageRect];
+            }
+
         }];
     }
     else if (self.imageArray.count > minCount) {
@@ -439,6 +506,13 @@
             }
             else {
                 [self drawImage:self.imageArray[idx] inRect:imageRect];
+
+                id loadingIndicatorData = self.loadingValueArray[idx];
+
+                if (![loadingIndicatorData[@"hidden"] boolValue]) {
+                    float loadingValue = [self.loadingValueArray[idx][@"value"] floatValue];
+                    [self drawLoadingIndicatorForValue:loadingValue inRect:imageRect];
+                }
             }
 
         }];
@@ -669,6 +743,26 @@
         if (!CGRectIsNull(self.selectedRect)) {
             [self setNeedsDisplay];
         }
+    }
+}
+
+- (void)setLoadingIndicatorColor:(UIColor *)loadingIndicatorColor {
+    if (_loadingIndicatorColor != loadingIndicatorColor) {
+        [self willChangeValueForKey:@"loadingIndicatorColor"];
+        _loadingIndicatorColor = loadingIndicatorColor;
+        [self didChangeValueForKey:@"loadingIndicatorColor"];
+
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setLoadingIndicatorWidth:(CGFloat)loadingIndicatorWidth {
+    if (_loadingIndicatorWidth != loadingIndicatorWidth) {
+        [self willChangeValueForKey:@"loadingIndicatorWidth"];
+        _loadingIndicatorWidth = loadingIndicatorWidth;
+        [self didChangeValueForKey:@"loadingIndicatorWidth"];
+
+        [self setNeedsDisplay];
     }
 }
 @end

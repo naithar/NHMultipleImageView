@@ -36,12 +36,21 @@
 @property (nonatomic, assign) CGFloat textContainerBorderWidth;
 @property (nonatomic, strong) UIColor *selectionColor;
 
+@property (nonatomic, strong) UIColor *loadingIndicatorColor;
+@property (nonatomic, assign) CGFloat loadingIndicatorWidth;
+
 - (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;
+
 - (void)addImage:(UIImage *)image;
 - (void)addImage:(UIImage*)image toIndex:(NSInteger)index;
 - (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index;
+
+- (void)setLoadingValue:(CGFloat)value forIndex:(NSInteger)index;
+- (void)setLoadingIndicatorHidden:(BOOL)hidden forIndex:(NSInteger)index;
+
 - (void)clearImageArray;
+
 - (NSInteger)currentCount;
 
 @end
