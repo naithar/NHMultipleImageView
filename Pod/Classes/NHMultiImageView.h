@@ -37,6 +37,7 @@
 @property (nonatomic, strong) UIColor *selectionColor;
 
 @property (nonatomic, strong) UIColor *loadingIndicatorColor;
+@property (nonatomic, assign) CGFloat loadingIndicatorLineWidth;
 @property (nonatomic, assign) CGFloat loadingIndicatorWidth;
 
 - (void)changePatternTo:(NSArray*)pattern;

@@ -163,7 +163,8 @@
     _selectedRect = CGRectNull;
     _selectedIndex = -1;
     _loadingIndicatorColor = [UIColor grayColor];
-    _loadingIndicatorWidth = 2;
+    _loadingIndicatorWidth = 50;
+    _loadingIndicatorLineWidth = 2;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -393,8 +394,8 @@
     CGPoint center = CGPointMake(imageRect.origin.x + imageRect.size.width/2,
                                  imageRect.origin.y + imageRect.size.height/2);
 
-    float minSize = MIN(50, MIN(imageRect.size.width - 10, imageRect.size.height - 10));
-    float lineWidth = self.loadingIndicatorWidth;
+    float minSize = MIN(self.loadingIndicatorWidth, MIN(imageRect.size.width - 10, imageRect.size.height - 10));
+    float lineWidth = self.loadingIndicatorLineWidth;
     float radius = (minSize-lineWidth)/2;
     float endAngle = M_PI*(value*2);
 
@@ -759,6 +760,16 @@
         [self willChangeValueForKey:@"loadingIndicatorColor"];
         _loadingIndicatorColor = loadingIndicatorColor;
         [self didChangeValueForKey:@"loadingIndicatorColor"];
+
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setLoadingIndicatorLineWidth:(CGFloat)loadingIndicatorLineWidth {
+    if (_loadingIndicatorLineWidth != loadingIndicatorLineWidth) {
+        [self willChangeValueForKey:@"loadingIndicatorLineWidth"];
+        _loadingIndicatorLineWidth = loadingIndicatorLineWidth;
+        [self didChangeValueForKey:@"loadingIndicatorLineWidth"];
 
         [self setNeedsDisplay];
     }
