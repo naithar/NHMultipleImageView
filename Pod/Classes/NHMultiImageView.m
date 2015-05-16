@@ -8,6 +8,7 @@
 
 #import "NHMultiImageView.h"
 #import <CommonCrypto/CommonDigest.h>
+#import <objc/runtime.h>
 
 @implementation UIImage (CustomHash)
 
