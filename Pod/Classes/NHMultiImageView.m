@@ -323,12 +323,20 @@
 }
 
 - (void)setLoadingValue:(CGFloat)value forIndex:(NSInteger)index {
+    if (index >= self.imageArray.count) {
+        return;
+    }
+    
     self.loadingValueArray[index][@"value"] = @(value);
 
     [self setNeedsDisplay];
 }
 
 - (void)setLoadingIndicatorHidden:(BOOL)hidden forIndex:(NSInteger)index {
+    if (index >= self.imageArray.count) {
+        return;
+    }
+
     self.loadingValueArray[index][@"hidden"] = @(hidden);
 
     [self setNeedsDisplay];
