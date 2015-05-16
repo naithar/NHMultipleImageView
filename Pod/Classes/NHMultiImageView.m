@@ -279,10 +279,10 @@
 
 - (void)addImage:(UIImage *)image {
     [self.imageArray addObject:image ?: [NSNull null]];
-    [self.loadingValueArray addObject:@{
+    [self.loadingValueArray addObject:[@{
                                         @"hidden" : @NO,
                                         @"value" : @0
-                                        }];
+                                        } mutableCopy]];
     [self setNeedsDisplay];
 }
 
@@ -313,10 +313,10 @@
     self.loadingValueArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < size; i++) {
         [self.imageArray addObject:[NSNull null]];
-        [self.loadingValueArray addObject:@{
+        [self.loadingValueArray addObject:[@{
                                             @"hidden" : @NO,
                                             @"value" : @0
-                                            }];
+                                            } mutableCopy]];
     }
     [self setNeedsDisplay];
 }
