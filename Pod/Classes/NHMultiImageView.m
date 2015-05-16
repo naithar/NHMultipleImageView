@@ -502,7 +502,7 @@
                 CGFloat ratio = image.size.width / image.size.height;
 
                 if (ratio) {
-                    if (ratio > 1.25) {
+                    if (ratio > 1.5) {
                         if (size.height * ratio > size.width) {
                             height = size.height;
                             width = height * ratio;
@@ -512,27 +512,27 @@
                             height = width / ratio;
                         }
                     }
-                    else if (ratio < 0.75) {
+                    else if (ratio < 0.5) {
                         if (size.height * ratio > size.width) {
-                            height = size.height;
-                            width = height * ratio;
-                        }
-                        else {
                             width = size.width;
                             height = width / ratio;
+                        }
+                        else {
+                            height = size.height;
+                            width = height * ratio;
                         }
                     }
                     else {
                         if (size.height * ratio > size.width) {
-                            width = size.width;
-                            height = width / ratio;
-                        }
-                        else {
                             height = size.height;
                             width = height * ratio;
                         }
+                        else {
+                            width = size.width;
+                            height = width / ratio;
+                        }
                     }
-
+                    
                     x = (size.width - width) / 2;
                     y = (size.height - height) / 2;
                 }
