@@ -514,12 +514,12 @@
                     }
                     else if (ratio < 0.5) {
                         if (size.height * ratio > size.width) {
-                            width = size.width;
-                            height = width / ratio;
-                        }
-                        else {
                             height = size.height;
                             width = height * ratio;
+                        }
+                        else {
+                            width = size.width;
+                            height = width / ratio;
                         }
                     }
                     else {
