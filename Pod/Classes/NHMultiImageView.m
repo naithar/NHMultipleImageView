@@ -10,6 +10,27 @@
 #import <CommonCrypto/CommonDigest.h>
 #import <objc/runtime.h>
 
+@interface NHImageItem : NSObject
+
+@property (nonatomic, strong) UIImage *image;
+@property (nonatomic, assign) UIViewContentMode contentMode;
+
+@end
+
+@implementation NHImageItem
+
+- (instancetype)initWithImage:(UIImage*)image
+               andContentMode:(UIViewContentMode)contentMode {
+    self = [super init];
+
+    if (self) {
+        _image = image;
+        _contentMode = contentMode;
+    }
+    return self;
+}
+
+
 @implementation UIImage (CustomHash)
 
 - (NSString*)cacheHash {
@@ -302,10 +323,13 @@
         return;
     }
 
-    self.imageArray[index] = @{
-                               @"image" : image ?: [NSNull null],
-                               @"contentMode" : @(UIViewContentModeCenter)
-                               };
+    self.imageArray[index] = [[NHImageItem alloc]
+                              initWithImage:image
+                              andContentMode:UIViewContentModeCenter];
+//  @{
+//                               @"image" : image ?: [NSNull null],
+//                               @"contentMode" : @(UIViewContentModeCenter)
+//                               };
     [self setNeedsDisplay];
 }
 
@@ -555,9 +579,9 @@
     if ([imageData isKindOfClass:[UIImage class]]) {
         image = imageData;
     }
-    else if ([imageData isKindOfClass:[NSDictionary class]]) {
-        image = imageData[@"image"];
-        mode = [imageData[@"contentMode"] unsignedIntegerValue];
+    else if ([imageData isKindOfClass:[NHImageItem class]]) {
+        image = ((NHImageItem*)imageData).image;
+        mode = ((NHImageItem*)imageData).contentMode;
     }
 
     UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash]];
