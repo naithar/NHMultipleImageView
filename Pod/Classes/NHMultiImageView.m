@@ -30,6 +30,30 @@
     return self;
 }
 
+@end
+
+@interface NHLoadingIndicatorItem : NSObject
+
+@property (nonatomic, assign) BOOL hidden;
+@property (nonatomic, assign) float value;
+
+@end
+
+@implementation NHLoadingIndicatorItem
+
+- (instancetype)initWithHidden:(BOOL)hidden
+                      andValue:(float)value {
+    self = [super init];
+
+    if (self) {
+        _hidden = hidden;
+        _value = value;
+    }
+
+    return self;
+}
+
+@end
 
 @implementation UIImage (CustomHash)
 
@@ -301,10 +325,14 @@
 
 - (void)addImage:(UIImage *)image {
     [self.imageArray addObject:image ?: [NSNull null]];
-    [self.loadingValueArray addObject:[@{
-                                        @"hidden" : @NO,
-                                        @"value" : @0
-                                        } mutableCopy]];
+    [self.loadingValueArray addObject:[[NHLoadingIndicatorItem alloc]
+                                       initWithHidden:NO
+                                       andValue:0]];
+
+//     [@{
+//                                        @"hidden" : @NO,
+//                                        @"value" : @0
+//                                        } mutableCopy]];
     [self setNeedsDisplay];
 }
 
@@ -338,10 +366,14 @@
     self.loadingValueArray = [[NSMutableArray alloc] init];
     for (int i = 0; i < size; i++) {
         [self.imageArray addObject:[NSNull null]];
-        [self.loadingValueArray addObject:[@{
-                                            @"hidden" : @NO,
-                                            @"value" : @0
-                                            } mutableCopy]];
+        [self.loadingValueArray addObject:[[NHLoadingIndicatorItem alloc]
+                                           initWithHidden:NO
+                                           andValue:0]];
+
+//         [@{
+//                                            @"hidden" : @NO,
+//                                            @"value" : @0
+//                                            } mutableCopy]];
     }
     [self setNeedsDisplay];
 }
@@ -351,7 +383,8 @@
         return;
     }
     
-    self.loadingValueArray[index][@"value"] = @(value);
+//    self.loadingValueArray[index][@"value"] = @(value);
+    ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).value = value;
 
     [self setNeedsDisplay];
 }
@@ -361,7 +394,8 @@
         return;
     }
 
-    self.loadingValueArray[index][@"hidden"] = @(hidden);
+//    self.loadingValueArray[index][@"hidden"] = @(hidden);
+    ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).hidden = hidden;
 
     [self setNeedsDisplay];
 }
@@ -525,10 +559,10 @@
 
             [self drawImage:self.imageArray[idx] inRect:imageRect];
 
-            id loadingIndicatorData = self.loadingValueArray[idx];
+            NHLoadingIndicatorItem* loadingIndicatorData = self.loadingValueArray[idx];
 
-            if (![loadingIndicatorData[@"hidden"] boolValue]) {
-                float loadingValue = [self.loadingValueArray[idx][@"value"] floatValue];
+            if (!loadingIndicatorData.hidden) {
+                float loadingValue = loadingIndicatorData.value;
                 [self drawLoadingIndicatorForValue:loadingValue inRect:imageRect];
             }
 
@@ -548,10 +582,10 @@
             else {
                 [self drawImage:self.imageArray[idx] inRect:imageRect];
 
-                id loadingIndicatorData = self.loadingValueArray[idx];
+                NHLoadingIndicatorItem* loadingIndicatorData = self.loadingValueArray[idx];
 
-                if (![loadingIndicatorData[@"hidden"] boolValue]) {
-                    float loadingValue = [self.loadingValueArray[idx][@"value"] floatValue];
+                if (!loadingIndicatorData.hidden) {
+                    float loadingValue = loadingIndicatorData.value;
                     [self drawLoadingIndicatorForValue:loadingValue inRect:imageRect];
                 }
             }
