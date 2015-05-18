@@ -325,7 +325,7 @@
     __weak __typeof(self) weakSelf = self;
     if (self.selectedIndex != -1
         && [weakSelf.delegate respondsToSelector:@selector(multiImageView:didSelectIndex:)]) {
-        [weakSelf.delegate multiImageView:weakSelf didSelectIndex:self.firstResponderIndex];
+        [weakSelf.delegate multiImageView:weakSelf didSelectIndex:self.selectedIndex];
     }
 
     self.selectedIndex = -1;
@@ -405,7 +405,7 @@
     if (self.firstResponderIndex != -1
         && [weakSelf.delegate respondsToSelector:@selector(multiImageView:didSaveAtIndex:)]) {
         [weakSelf.delegate multiImageView:weakSelf
-                           didSaveAtIndex:self.selectedIndex];
+                           didSaveAtIndex:self.firstResponderIndex];
     }
 
     [self resignFirstResponder];
