@@ -284,7 +284,8 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
-    if (self.isFirstResponder) {
+    if (self.isFirstResponder
+        || [UIMenuController sharedMenuController].isMenuVisible) {
         [self resignFirstResponder];
         [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
     }
