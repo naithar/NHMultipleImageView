@@ -14,6 +14,7 @@
 
 @optional
 - (void)multiImageView:(NHMultiImageView*)view didSelectIndex:(NSInteger)index;
+- (void)multiImageView:(NHMultiImageView *)view didSaveAtIndex:(NSInteger)index;
 
 @end
 
@@ -39,6 +40,8 @@
 @property (nonatomic, strong) UIColor *loadingIndicatorColor;
 @property (nonatomic, assign) CGFloat loadingIndicatorLineWidth;
 @property (nonatomic, assign) CGFloat loadingIndicatorWidth;
+
+@property (nonatomic, assign) BOOL useMenuController;
 
 - (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;

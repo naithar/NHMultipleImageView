@@ -213,6 +213,7 @@
     _loadingIndicatorColor = [UIColor grayColor];
     _loadingIndicatorWidth = 50;
     _loadingIndicatorLineWidth = 2;
+    _useMenuController = YES;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -290,9 +291,11 @@
     if ([self findSelectedRectWithTouches:touches]) {
         [self setNeedsDisplay];
 
-        [self performSelector:@selector(longPressForSelected)
-                   withObject:nil
-                   afterDelay:1];
+        if (self.useMenuController) {
+            [self performSelector:@selector(longPressForSelected)
+                       withObject:nil
+                       afterDelay:1];
+        }
     }
 }
 
@@ -306,9 +309,11 @@
                                                  selector:@selector(longPressForSelected)
                                                    object:nil];
 
-        [self performSelector:@selector(longPressForSelected)
-                   withObject:nil
-                   afterDelay:1];
+        if (self.useMenuController) {
+            [self performSelector:@selector(longPressForSelected)
+                       withObject:nil
+                       afterDelay:1];
+        }
     }
 }
 
@@ -360,7 +365,7 @@
 }
 
 - (BOOL)canBecomeFirstResponder {
-    return YES;
+    return self.useMenuController;
 }
 
 - (BOOL)becomeFirstResponder {
@@ -379,7 +384,13 @@
 }
 
 - (void)save:(id)sender {
-    NSLog(@"%d", self.firstResponderIndex);
+    __weak __typeof(self) weakSelf = self;
+    if (self.firstResponderIndex != -1
+        && [weakSelf.delegate respondsToSelector:@selector(multiImageView:didSaveAtIndex:)]) {
+        [weakSelf.delegate multiImageView:weakSelf
+                           didSaveAtIndex:self.selectedIndex];
+    }
+
     [self resignFirstResponder];
 }
 
@@ -393,11 +404,6 @@
     [self.loadingValueArray addObject:[[NHLoadingIndicatorItem alloc]
                                        initWithHidden:NO
                                        andValue:0]];
-
-//     [@{
-//                                        @"hidden" : @NO,
-//                                        @"value" : @0
-//                                        } mutableCopy]];
     [self setNeedsDisplay];
 }
 
@@ -419,10 +425,6 @@
     self.imageArray[index] = [[NHImageItem alloc]
                               initWithImage:image
                               andContentMode:UIViewContentModeCenter];
-//  @{
-//                               @"image" : image ?: [NSNull null],
-//                               @"contentMode" : @(UIViewContentModeCenter)
-//                               };
     [self setNeedsDisplay];
 }
 
@@ -434,11 +436,6 @@
         [self.loadingValueArray addObject:[[NHLoadingIndicatorItem alloc]
                                            initWithHidden:NO
                                            andValue:0]];
-
-//         [@{
-//                                            @"hidden" : @NO,
-//                                            @"value" : @0
-//                                            } mutableCopy]];
     }
     [self setNeedsDisplay];
 }
@@ -447,8 +444,7 @@
     if (index >= self.imageArray.count) {
         return;
     }
-    
-//    self.loadingValueArray[index][@"value"] = @(value);
+
     ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).value = value;
 
     [self setNeedsDisplay];
@@ -459,7 +455,6 @@
         return;
     }
 
-//    self.loadingValueArray[index][@"hidden"] = @(hidden);
     ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).hidden = hidden;
 
     [self setNeedsDisplay];
