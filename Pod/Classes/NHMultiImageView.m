@@ -150,11 +150,9 @@
     __strong static NSArray* instance = nil;
     dispatch_once(&token, ^{
 
-        NSString *bundlePath = [[NSBundle bundleForClass:[NHMultiImageView class]]
-                                pathForResource:@"NHMultipleImageView"
-                                ofType:@"bundle"];
+//        NSString *bundlePath = [NSBundle bundleForClass:[NHMultiImageView class]];
 
-        NSBundle *bundle = [NSBundle bundleWithPath:bundlePath];
+        NSBundle *bundle = [NSBundle bundleForClass:[NHMultiImageView class]];
 
         NSData *patternData = [NSData dataWithContentsOfFile:[bundle
                                                               pathForResource:@"NHMultiImagePattern"
