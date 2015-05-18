@@ -362,6 +362,11 @@
     [[UIMenuController sharedMenuController] setTargetRect:self.selectedRect inView:self];
     [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
 
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(menuDidHide:)
+                                                 name:UIMenuControllerWillHideMenuNotification
+                                               object:nil];
+
     self.selectedIndex = -1;
     self.selectedRect = CGRectNull;
     [self setNeedsDisplay];
@@ -378,7 +383,17 @@
 
 - (BOOL)resignFirstResponder {
     self.firstResponderIndex = -1;
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIMenuControllerWillHideMenuNotification
+                                                  object:nil];
     return [super resignFirstResponder];
+}
+
+- (void)menuDidHide:(id)sender {
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIMenuControllerWillHideMenuNotification
+                                                  object:nil];
+    [self resignFirstResponder];
 }
 
 - (BOOL)canPerformAction:(SEL)action
