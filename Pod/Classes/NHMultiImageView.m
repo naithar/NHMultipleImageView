@@ -92,6 +92,8 @@
 @property (nonatomic, assign) CGRect selectedRect;
 @property (nonatomic, assign) NSInteger selectedIndex;
 
+@property (nonatomic, assign) NSInteger firstResponderIndex;
+
 @end
 
 @implementation NHMultiImageView
@@ -207,6 +209,7 @@
     _textContainerBorderWidth = 0;
     _selectedRect = CGRectNull;
     _selectedIndex = -1;
+    _firstResponderIndex = -1;
     _loadingIndicatorColor = [UIColor grayColor];
     _loadingIndicatorWidth = 50;
     _loadingIndicatorLineWidth = 2;
@@ -281,8 +284,15 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
+    [self resignFirstResponder];
+    [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
+
     if ([self findSelectedRectWithTouches:touches]) {
         [self setNeedsDisplay];
+
+        [self performSelector:@selector(longPressForSelected)
+                   withObject:nil
+                   afterDelay:1];
     }
 }
 
@@ -291,6 +301,14 @@
 
     if ([self findSelectedRectWithTouches:touches]) {
         [self setNeedsDisplay];
+
+        [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                                 selector:@selector(longPressForSelected)
+                                                   object:nil];
+
+        [self performSelector:@selector(longPressForSelected)
+                   withObject:nil
+                   afterDelay:1];
     }
 }
 
@@ -307,7 +325,9 @@
     self.selectedRect = CGRectNull;
     [self setNeedsDisplay];
 
-
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                             selector:@selector(longPressForSelected)
+                                               object:nil];
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
@@ -316,6 +336,51 @@
     self.selectedIndex = -1;
     self.selectedRect = CGRectNull;
     [self setNeedsDisplay];
+
+    [NSObject cancelPreviousPerformRequestsWithTarget:self
+                                             selector:@selector(longPressForSelected)
+                                               object:nil];
+}
+
+- (void)longPressForSelected {
+    [self becomeFirstResponder];
+
+    self.firstResponderIndex = self.selectedIndex;
+    [[UIMenuController sharedMenuController] setMenuItems:@[
+                                                            [[UIMenuItem alloc]
+                                                             initWithTitle:NSLocalizedStringFromTable(@"NHImageView.save", @"NHMultiImageView", nil)
+                                                             action:@selector(save:)]
+                                                            ]];
+    [[UIMenuController sharedMenuController] setTargetRect:self.selectedRect inView:self];
+    [[UIMenuController sharedMenuController] setMenuVisible:YES animated:YES];
+
+    self.selectedIndex = -1;
+    self.selectedRect = CGRectNull;
+    [self setNeedsDisplay];
+}
+
+- (BOOL)canBecomeFirstResponder {
+    return YES;
+}
+
+- (BOOL)becomeFirstResponder {
+    self.firstResponderIndex = self.selectedIndex;
+    return [super becomeFirstResponder];
+}
+
+- (BOOL)resignFirstResponder {
+    self.firstResponderIndex = -1;
+    return [super resignFirstResponder];
+}
+
+- (BOOL)canPerformAction:(SEL)action
+              withSender:(id)sender {
+    return action == NSSelectorFromString(@"save:");
+}
+
+- (void)save:(id)sender {
+    NSLog(@"%d", self.firstResponderIndex);
+    [self resignFirstResponder];
 }
 
 - (void)changePatternTo:(NSArray*)pattern {
