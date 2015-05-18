@@ -324,7 +324,7 @@
     __weak __typeof(self) weakSelf = self;
     if (self.selectedIndex != -1
         && [weakSelf.delegate respondsToSelector:@selector(multiImageView:didSelectIndex:)]) {
-        [weakSelf.delegate multiImageView:weakSelf didSelectIndex:self.selectedIndex];
+        [weakSelf.delegate multiImageView:weakSelf didSelectIndex:self.firstResponderIndex];
     }
 
     self.selectedIndex = -1;
