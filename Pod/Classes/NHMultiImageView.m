@@ -212,6 +212,7 @@
     _loadingIndicatorWidth = 50;
     _loadingIndicatorLineWidth = 2;
     _useMenuController = YES;
+    _menuDisplayDelay = 0.5;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -294,7 +295,7 @@
             if (self.useMenuController) {
                 [self performSelector:@selector(longPressForSelected)
                            withObject:nil
-                           afterDelay:1];
+                           afterDelay:self.menuDisplayDelay];
             }
         }
     }
@@ -313,7 +314,7 @@
         if (self.useMenuController) {
             [self performSelector:@selector(longPressForSelected)
                        withObject:nil
-                       afterDelay:1];
+                       afterDelay:self.menuDisplayDelay];
         }
     }
 }

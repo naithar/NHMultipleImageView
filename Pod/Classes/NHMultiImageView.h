@@ -42,6 +42,7 @@
 @property (nonatomic, assign) CGFloat loadingIndicatorWidth;
 
 @property (nonatomic, assign) BOOL useMenuController;
+@property (nonatomic, assign) NSTimeInterval menuDisplayDelay;
 
 - (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;
