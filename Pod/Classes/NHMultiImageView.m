@@ -285,16 +285,19 @@
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
     [super touchesBegan:touches withEvent:event];
 
-    [self resignFirstResponder];
-    [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
+    if (self.isFirstResponder) {
+        [self resignFirstResponder];
+        [[UIMenuController sharedMenuController] setMenuVisible:NO animated:YES];
+    }
+    else {
+        if ([self findSelectedRectWithTouches:touches]) {
+            [self setNeedsDisplay];
 
-    if ([self findSelectedRectWithTouches:touches]) {
-        [self setNeedsDisplay];
-
-        if (self.useMenuController) {
-            [self performSelector:@selector(longPressForSelected)
-                       withObject:nil
-                       afterDelay:1];
+            if (self.useMenuController) {
+                [self performSelector:@selector(longPressForSelected)
+                           withObject:nil
+                           afterDelay:1];
+            }
         }
     }
 }
