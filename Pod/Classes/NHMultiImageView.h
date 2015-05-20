@@ -59,3 +59,9 @@
 - (NSInteger)currentCount;
 
 @end
+
+@interface UIImage (CustomHash)
+
+- (NSString*)cacheHash;
+
+@end
