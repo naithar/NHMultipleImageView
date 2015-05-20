@@ -66,12 +66,12 @@
         NSData *imageData = UIImagePNGRepresentation(self);
         CC_MD5([imageData bytes], (unsigned int)[imageData length], result);
         imageHash = [NSString stringWithFormat:
-                               @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
-                               result[0], result[1], result[2], result[3],
-                               result[4], result[5], result[6], result[7],
-                               result[8], result[9], result[10], result[11],
-                               result[12], result[13], result[14], result[15]
-                               ];
+                     @"%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X%02X",
+                     result[0], result[1], result[2], result[3],
+                     result[4], result[5], result[6], result[7],
+                     result[8], result[9], result[10], result[11],
+                     result[12], result[13], result[14], result[15]
+                     ];
 
         objc_setAssociatedObject(self, @selector(cacheHash), imageHash, OBJC_ASSOCIATION_COPY);
     }
@@ -150,7 +150,7 @@
     __strong static NSArray* instance = nil;
     dispatch_once(&token, ^{
 
-//        NSString *bundlePath = [NSBundle bundleForClass:[NHMultiImageView class]];
+        //        NSString *bundlePath = [NSBundle bundleForClass:[NHMultiImageView class]];
 
         NSBundle *bundle = [NSBundle bundleForClass:[NHMultiImageView class]];
 
@@ -351,6 +351,12 @@
 }
 
 - (void)longPressForSelected {
+    if (self.selectedIndex >= MIN(self.maxImageCount, self.pattern.count) - 1
+        && self.imageArray.count > self.maxImageCount) {
+        [self resignFirstResponder];
+        return;
+    }
+
     [self becomeFirstResponder];
 
     self.firstResponderIndex = self.selectedIndex;
@@ -427,7 +433,8 @@
 
 - (void)addImage:(UIImage*)image
          toIndex:(NSInteger)index {
-    if (index >= self.imageArray.count) {
+    if (index >= self.imageArray.count
+        || index >= self.maxImageCount) {
         return;
     }
 
@@ -436,7 +443,8 @@
 }
 
 - (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index {
-    if (index >= self.imageArray.count) {
+    if (index >= self.imageArray.count
+        || index >= self.maxImageCount) {
         return;
     }
 
@@ -449,6 +457,7 @@
 - (void)setImageArraySize:(NSUInteger)size {
     self.imageArray = [[NSMutableArray alloc] init];
     self.loadingValueArray = [[NSMutableArray alloc] init];
+
     for (int i = 0; i < size; i++) {
         [self.imageArray addObject:[NSNull null]];
         [self.loadingValueArray addObject:[[NHLoadingIndicatorItem alloc]
@@ -459,7 +468,8 @@
 }
 
 - (void)setLoadingValue:(CGFloat)value forIndex:(NSInteger)index {
-    if (index >= self.imageArray.count) {
+    if (index >= self.imageArray.count
+        || index >= self.maxImageCount) {
         return;
     }
 
@@ -469,7 +479,8 @@
 }
 
 - (void)setLoadingIndicatorHidden:(BOOL)hidden forIndex:(NSInteger)index {
-    if (index >= self.imageArray.count) {
+    if (index >= self.imageArray.count
+        || index >= self.maxImageCount) {
         return;
     }
 
@@ -759,7 +770,7 @@
                             height = width / ratio;
                         }
                     }
-                    
+
                     x = (size.width - width) / 2;
                     y = (size.height - height) / 2;
                 }
@@ -892,7 +903,7 @@
         [self willChangeValueForKey:@"selectionColor"];
         _selectionColor = selectionColor;
         [self didChangeValueForKey:@"selectionColor"];
-        
+
         if (!CGRectIsNull(self.selectedRect)) {
             [self setNeedsDisplay];
         }
@@ -904,7 +915,7 @@
         [self willChangeValueForKey:@"loadingIndicatorColor"];
         _loadingIndicatorColor = loadingIndicatorColor;
         [self didChangeValueForKey:@"loadingIndicatorColor"];
-
+        
         [self setNeedsDisplay];
     }
 }
@@ -914,7 +925,7 @@
         [self willChangeValueForKey:@"loadingIndicatorLineWidth"];
         _loadingIndicatorLineWidth = loadingIndicatorLineWidth;
         [self didChangeValueForKey:@"loadingIndicatorLineWidth"];
-
+        
         [self setNeedsDisplay];
     }
 }
@@ -924,7 +935,7 @@
         [self willChangeValueForKey:@"loadingIndicatorWidth"];
         _loadingIndicatorWidth = loadingIndicatorWidth;
         [self didChangeValueForKey:@"loadingIndicatorWidth"];
-
+        
         [self setNeedsDisplay];
     }
 }
