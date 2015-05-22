@@ -219,6 +219,7 @@
     _blurColor = [[UIColor grayColor] colorWithAlphaComponent:0.1];
     _blurRadius = 10;
     _blurSaturation = 0.85;
+    _useImageForBlur = NO;
 
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
@@ -837,10 +838,11 @@
 
                 }
                 else {
-                    x = (size.width - image.size.width) / 2;
-                    y = (size.height - image.size.height) / 2;
-                    width = image.size.width;
-                    height = image.size.height;
+                    width = MIN(image.size.width, MIN(size.width - 10, size.height - 10));
+                    height = MIN(image.size.height, MIN(size.width - 10, size.height - 10));
+                    x = (size.width - width) / 2;
+                    y = (size.height - height) / 2;
+
                 }
 
                 [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
@@ -856,6 +858,16 @@
                             saturationDeltaFactor:self.blurSaturation
                                         maskImage:nil]
                  drawAtPoint:CGPointZero];
+
+                if (self.useImageForBlur) {
+                    UIImage *blurCenterImage = self.blurCenterImage ?: [UIImage imageNamed:@"NHMultiImage.blurCenter.png"];
+                    CGFloat blurImageWidth = MIN(blurCenterImage.size.width, MIN(size.width - 10, size.height - 10));
+                    CGFloat blurImageHeight = MIN(blurCenterImage.size.height, MIN(size.width - 10, size.height - 10));
+                    CGFloat blurImageX = (size.width - blurImageWidth) / 2;
+                    CGFloat blurImageY = (size.height - blurImageHeight) / 2;
+
+                    [blurCenterImage drawInRect:CGRectMake(blurImageX, blurImageY, blurImageWidth, blurImageHeight)];
+                }
 
                 blurredImage = UIGraphicsGetImageFromCurrentImageContext();
 
