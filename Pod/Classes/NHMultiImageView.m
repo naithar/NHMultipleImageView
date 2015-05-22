@@ -215,6 +215,11 @@
     _useMenuController = YES;
     _menuDisplayDelay = 0.5;
 
+    _useBlur = NO;
+    _blurColor = [[UIColor grayColor] colorWithAlphaComponent:0.1];
+    _blurRadius = 10;
+    _blurSaturation = 0.85;
+
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
 
@@ -818,8 +823,11 @@
             [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
 
             if (self.useBlur) {
-
-                [[resultImage applyBlurWithRadius:10 tintColor:[[UIColor grayColor] colorWithAlphaComponent:0.1] saturationDeltaFactor:0.85 maskImage:nil] drawAtPoint:CGPointZero];
+                [[resultImage applyBlurWithRadius:self.blurRadius
+                                        tintColor:self.blurColor
+                            saturationDeltaFactor:self.blurSaturation
+                                        maskImage:nil]
+                 drawAtPoint:CGPointZero];
 
                 blurredImage = UIGraphicsGetImageFromCurrentImageContext();
 

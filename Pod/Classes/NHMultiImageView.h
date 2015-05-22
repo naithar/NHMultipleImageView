@@ -45,6 +45,9 @@
 @property (nonatomic, assign) NSTimeInterval menuDisplayDelay;
 
 @property (nonatomic, assign) BOOL useBlur;
+@property (nonatomic, assign) CGFloat blurRadius;
+@property (nonatomic, strong) UIColor *blurColor;
+@property (nonatomic, assign) CGFloat blurSaturation;
 
 - (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;
