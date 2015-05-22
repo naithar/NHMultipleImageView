@@ -722,114 +722,117 @@
         mode = ((NHImageItem*)imageData).contentMode;
     }
 
-    if (self.useBlur) {
-        UIImage *blurredImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+    UIImage *blurredImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
 
-        if (blurredImage) {
-            return blurredImage;
-        }
+    if (self.useBlur
+        && blurredImage) {
+        return blurredImage;
     }
 
     UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
 
-    if (!resultImage) {
-        UIGraphicsBeginImageContextWithOptions(size, NO, 0);
+    if (!resultImage
+        || (!blurredImage
+            && self.useBlur)) {
 
+            UIGraphicsBeginImageContextWithOptions(size, NO, 0);
 
-        if (corners) {
-            [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
-            UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
-                                                            cornerRadius:self.cornerRadius];
+            if (!resultImage) {
+                if (corners) {
+                    [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) setFill];
+                    UIBezierPath *path = [UIBezierPath bezierPathWithRoundedRect:CGRectMake(0, 0, floor(size.width), floor(size.height))
+                                                                    cornerRadius:self.cornerRadius];
 
-            path.lineWidth = 0;
-            [path fill];
-            [path addClip];
-        }
-        else {
-            [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
-            UIRectFill(CGRectMake(0, 0, floor(size.width), floor(size.height)));
-        }
-
-
-        CGFloat height = size.height;
-        CGFloat width = size.width;
-        CGFloat x = 0;
-        CGFloat y = 0;
-
-
-        if (mode != UIViewContentModeCenter) {
-
-            if (image.size.height) {
-                CGFloat ratio = image.size.width / image.size.height;
-
-                if (ratio) {
-                    if (ratio > 1.5) {
-                        if (size.height * ratio > size.width) {
-                            height = size.height;
-                            width = height * ratio;
-                        }
-                        else {
-                            width = size.width;
-                            height = width / ratio;
-                        }
-                    }
-                    else if (ratio < 0.5) {
-                        if (size.height * ratio > size.width) {
-                            height = size.height;
-                            width = height * ratio;
-                        }
-                        else {
-                            width = size.width;
-                            height = width / ratio;
-                        }
-                    }
-                    else {
-                        if (size.height * ratio > size.width) {
-                            height = size.height;
-                            width = height * ratio;
-                        }
-                        else {
-                            width = size.width;
-                            height = width / ratio;
-                        }
-                    }
-
-                    x = (size.width - width) / 2;
-                    y = (size.height - height) / 2;
+                    path.lineWidth = 0;
+                    [path fill];
+                    [path addClip];
+                }
+                else {
+                    [(self.imageBackgroundColor ?: [UIColor groupTableViewBackgroundColor]) set];
+                    UIRectFill(CGRectMake(0, 0, floor(size.width), floor(size.height)));
                 }
 
+
+                CGFloat height = size.height;
+                CGFloat width = size.width;
+                CGFloat x = 0;
+                CGFloat y = 0;
+
+
+                if (mode != UIViewContentModeCenter) {
+
+                    if (image.size.height) {
+                        CGFloat ratio = image.size.width / image.size.height;
+
+                        if (ratio) {
+                            if (ratio > 1.5) {
+                                if (size.height * ratio > size.width) {
+                                    height = size.height;
+                                    width = height * ratio;
+                                }
+                                else {
+                                    width = size.width;
+                                    height = width / ratio;
+                                }
+                            }
+                            else if (ratio < 0.5) {
+                                if (size.height * ratio > size.width) {
+                                    height = size.height;
+                                    width = height * ratio;
+                                }
+                                else {
+                                    width = size.width;
+                                    height = width / ratio;
+                                }
+                            }
+                            else {
+                                if (size.height * ratio > size.width) {
+                                    height = size.height;
+                                    width = height * ratio;
+                                }
+                                else {
+                                    width = size.width;
+                                    height = width / ratio;
+                                }
+                            }
+
+                            x = (size.width - width) / 2;
+                            y = (size.height - height) / 2;
+                        }
+
+                    }
+
+                }
+                else {
+                    x = (size.width - image.size.width) / 2;
+                    y = (size.height - image.size.height) / 2;
+                    width = image.size.width;
+                    height = image.size.height;
+                }
+
+                [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
+
+                resultImage = UIGraphicsGetImageFromCurrentImageContext();
             }
 
-        }
-        else {
-            x = (size.width - image.size.width) / 2;
-            y = (size.height - image.size.height) / 2;
-            width = image.size.width;
-            height = image.size.height;
-        }
+            [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
 
-        [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
+            if (self.useBlur) {
 
-        resultImage = UIGraphicsGetImageFromCurrentImageContext();
+                [[resultImage applyBlurWithRadius:10 tintColor:[[UIColor grayColor] colorWithAlphaComponent:0.1] saturationDeltaFactor:0.85 maskImage:nil] drawAtPoint:CGPointZero];
 
-        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
+                blurredImage = UIGraphicsGetImageFromCurrentImageContext();
 
-        if (self.useBlur) {
-
-            [[resultImage applyBlurWithRadius:10 tintColor:[[UIColor grayColor] colorWithAlphaComponent:0.1] saturationDeltaFactor:0.85 maskImage:nil] drawAtPoint:CGPointZero];
-
-            UIImage *blurredImage = UIGraphicsGetImageFromCurrentImageContext();
-
-            [[self class] placeImage:blurredImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
-
+                [[self class] placeImage:blurredImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+                
+                UIGraphicsEndImageContext();
+                
+                return blurredImage;
+            }
+            
             UIGraphicsEndImageContext();
-
-            return blurredImage;
         }
-
-        UIGraphicsEndImageContext();
-    }
-
+    
     return resultImage;
 }
 
