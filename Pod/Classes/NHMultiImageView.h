@@ -49,7 +49,7 @@
 @property (nonatomic, strong) UIColor *blurColor;
 @property (nonatomic, assign) CGFloat blurSaturation;
 
-@property (nonatomic, assign) BOOL useImageForBlur;
+@property (nonatomic, assign) BOOL useCenterBlurImage;
 @property (nonatomic, strong) UIImage *blurCenterImage;
 
 - (void)changePatternTo:(NSArray*)pattern;

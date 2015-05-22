@@ -29,7 +29,7 @@
 
 //    self.multiImageView.blurCenterImage = [UIImage imageNamed:@"img2"];
     self.multiImageView.useBlur = YES;
-    self.multiImageView.useImageForBlur = YES;
+    self.multiImageView.useCenterBlurImage = YES;
     [self.multiImageView setImageArraySize:5];
 //    self.multiImageView.maxImageCount = 3;
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:0];
