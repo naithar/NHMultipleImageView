@@ -443,8 +443,8 @@
     if (index >= self.imageArray.count
         || (index >= self.maxImageCount
             && self.maxImageCount > 0)) {
-        return;
-    }
+            return;
+        }
 
     self.imageArray[index] = image ?: [NSNull null];
     [self setNeedsDisplay];
@@ -454,8 +454,8 @@
     if (index >= self.imageArray.count
         || (index >= self.maxImageCount
             && self.maxImageCount > 0)) {
-        return;
-    }
+            return;
+        }
 
     self.imageArray[index] = [[NHImageItem alloc]
                               initWithImage:image
@@ -480,8 +480,8 @@
     if (index >= self.imageArray.count
         || (index >= self.maxImageCount
             && self.maxImageCount > 0)) {
-        return;
-    }
+            return;
+        }
 
     ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).value = value;
 
@@ -492,8 +492,8 @@
     if (index >= self.imageArray.count
         || (index >= self.maxImageCount
             && self.maxImageCount > 0)) {
-        return;
-    }
+            return;
+        }
 
     ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).hidden = hidden;
 
@@ -759,7 +759,8 @@
     UIImage *blurredImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
 
     if (self.useBlur
-        && blurredImage) {
+        && blurredImage
+        && mode != UIViewContentModeCenter) {
         return blurredImage;
     }
 
@@ -852,7 +853,8 @@
 
             [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
 
-            if (self.useBlur) {
+            if (self.useBlur
+                && mode != UIViewContentModeCenter) {
                 [[resultImage applyBlurWithRadius:self.blurRadius
                                         tintColor:self.blurColor
                             saturationDeltaFactor:self.blurSaturation
@@ -872,15 +874,15 @@
                 blurredImage = UIGraphicsGetImageFromCurrentImageContext();
 
                 [[self class] placeImage:blurredImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
-                
+
                 UIGraphicsEndImageContext();
-                
+
                 return blurredImage;
             }
-            
+
             UIGraphicsEndImageContext();
         }
-    
+
     return resultImage;
 }
 
