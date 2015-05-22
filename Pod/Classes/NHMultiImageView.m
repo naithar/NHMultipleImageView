@@ -509,6 +509,34 @@
     }
 }
 
+- (void)setBlurRadius:(CGFloat)blurRadius {
+    if (_blurRadius != blurRadius) {
+        [self willChangeValueForKey:@"blurRadius"];
+        _blurRadius = blurRadius;
+        [self didChangeValueForKey:@"blurRadius"];
+
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setBlurColor:(UIColor *)blurColor {
+    if (![_blurColor isEqual:blurColor]) {
+        [self willChangeValueForKey:@"blurColor"];
+        _blurColor = blurColor;
+        [self didChangeValueForKey:@"blurColor"];
+        [self setNeedsDisplay];
+    }
+}
+
+- (void)setBlurSaturation:(CGFloat)blurSaturation {
+    if (_blurSaturation != blurSaturation) {
+        [self willChangeValueForKey:@"blurSaturation"];
+        _blurSaturation = blurSaturation;
+        [self didChangeValueForKey:@"blurSaturation"];
+        [self setNeedsDisplay];
+    }
+}
+
 - (void)clearImageArray {
     self.imageArray = [[NSMutableArray alloc] init];
     self.loadingValueArray = [[NSMutableArray alloc] init];
