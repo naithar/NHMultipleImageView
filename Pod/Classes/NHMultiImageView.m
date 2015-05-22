@@ -9,6 +9,7 @@
 #import "NHMultiImageView.h"
 #import <CommonCrypto/CommonDigest.h>
 #import <objc/runtime.h>
+#import "Private/UIImage+ImageEffects.h"
 
 @interface NHImageItem : NSObject
 
@@ -108,15 +109,15 @@
     return instance;
 }
 
-+ (void)placeImage:(UIImage*)image inCacheForSize:(CGSize)size withCorners:(BOOL)corners withHash:(id)hash {
++ (void)placeImage:(UIImage*)image inCacheForSize:(CGSize)size withCorners:(BOOL)corners withHash:(id)hash withBlur:(BOOL)blur {
     [[self sharedCache] setObject:image
-                           forKey:[NSString stringWithFormat:@"%@-%@-%@", hash, @(corners), NSStringFromCGSize(size)]];
+                           forKey:[NSString stringWithFormat:@"%@-%@-%@-%@", hash, @(corners), NSStringFromCGSize(size), @(blur)]];
 }
 
-+ (UIImage*)imageFromCacheForSize:(CGSize)size withCorners:(BOOL)corners withHash:(id)hash {
++ (UIImage*)imageFromCacheForSize:(CGSize)size withCorners:(BOOL)corners withHash:(id)hash withBlur:(BOOL)blur {
 
     UIImage *result = [[self sharedCache]
-                       objectForKey:[NSString stringWithFormat:@"%@-%@-%@", hash, @(corners), NSStringFromCGSize(size)]];
+                       objectForKey:[NSString stringWithFormat:@"%@-%@-%@-%@", hash, @(corners), NSStringFromCGSize(size), @(blur)]];
     return result;
 }
 
@@ -434,7 +435,8 @@
 - (void)addImage:(UIImage*)image
          toIndex:(NSInteger)index {
     if (index >= self.imageArray.count
-        || index >= self.maxImageCount) {
+        || (index >= self.maxImageCount
+            && self.maxImageCount > 0)) {
         return;
     }
 
@@ -444,7 +446,8 @@
 
 - (void)addCenteredImage:(UIImage*)image toIndex:(NSInteger)index {
     if (index >= self.imageArray.count
-        || index >= self.maxImageCount) {
+        || (index >= self.maxImageCount
+            && self.maxImageCount > 0)) {
         return;
     }
 
@@ -469,7 +472,8 @@
 
 - (void)setLoadingValue:(CGFloat)value forIndex:(NSInteger)index {
     if (index >= self.imageArray.count
-        || index >= self.maxImageCount) {
+        || (index >= self.maxImageCount
+            && self.maxImageCount > 0)) {
         return;
     }
 
@@ -480,13 +484,24 @@
 
 - (void)setLoadingIndicatorHidden:(BOOL)hidden forIndex:(NSInteger)index {
     if (index >= self.imageArray.count
-        || index >= self.maxImageCount) {
+        || (index >= self.maxImageCount
+            && self.maxImageCount > 0)) {
         return;
     }
 
     ((NHLoadingIndicatorItem*)self.loadingValueArray[index]).hidden = hidden;
 
     [self setNeedsDisplay];
+}
+
+- (void)setUseBlur:(BOOL)useBlur {
+    if (_useBlur != useBlur) {
+        [self willChangeValueForKey:@"useBlur"];
+        _useBlur = useBlur;
+        [self didChangeValueForKey:@"useBlur"];
+
+        [self setNeedsDisplay];
+    }
 }
 
 - (void)clearImageArray {
@@ -707,7 +722,15 @@
         mode = ((NHImageItem*)imageData).contentMode;
     }
 
-    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash]];
+    if (self.useBlur) {
+        UIImage *blurredImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+
+        if (blurredImage) {
+            return blurredImage;
+        }
+    }
+
+    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
 
     if (!resultImage) {
         UIGraphicsBeginImageContextWithOptions(size, NO, 0);
@@ -789,11 +812,22 @@
 
         resultImage = UIGraphicsGetImageFromCurrentImageContext();
 
-        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash]];
+        [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
+
+        if (self.useBlur) {
+
+            [[resultImage applyBlurWithRadius:10 tintColor:[[UIColor grayColor] colorWithAlphaComponent:0.1] saturationDeltaFactor:0.85 maskImage:nil] drawAtPoint:CGPointZero];
+
+            UIImage *blurredImage = UIGraphicsGetImageFromCurrentImageContext();
+
+            [[self class] placeImage:blurredImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+
+            UIGraphicsEndImageContext();
+
+            return blurredImage;
+        }
 
         UIGraphicsEndImageContext();
-        //            }
-
     }
 
     return resultImage;

@@ -44,6 +44,8 @@
 @property (nonatomic, assign) BOOL useMenuController;
 @property (nonatomic, assign) NSTimeInterval menuDisplayDelay;
 
+@property (nonatomic, assign) BOOL useBlur;
+
 - (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;
 

@@ -27,6 +27,7 @@
     self.multiImageView.contentInsets = UIEdgeInsetsMake(5, 5, 5, 5);
     self.multiImageView.imageInsets = UIEdgeInsetsMake(0, 0, 5, 5);
 
+    self.multiImageView.useBlur = YES;
     [self.multiImageView setImageArraySize:5];
 //    self.multiImageView.maxImageCount = 3;
     [self.multiImageView addImage:[UIImage imageNamed:@"img2"] toIndex:0];
