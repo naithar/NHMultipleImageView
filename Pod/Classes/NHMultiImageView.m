@@ -221,6 +221,8 @@
     _blurSaturation = 0.85;
     _useCenterBlurImage = NO;
 
+    _useCache = NO;
+
     self.multipleTouchEnabled = NO;
     self.userInteractionEnabled = YES;
 
@@ -756,7 +758,11 @@
         mode = ((NHImageItem*)imageData).contentMode;
     }
 
-    UIImage *blurredImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+    UIImage *blurredImage;
+
+    if (self.useCache) {
+        blurredImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+    }
 
     if (self.useBlur
         && blurredImage
@@ -764,7 +770,11 @@
         return blurredImage;
     }
 
-    UIImage *resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
+    UIImage *resultImage;
+
+    if (self.useCache) {
+        resultImage = [[self class] imageFromCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
+    }
 
     if (!resultImage
         || (!blurredImage
@@ -849,9 +859,12 @@
                 [image drawInRect:CGRectMake(x, y, floor(width), floor(height))];
 
                 resultImage = UIGraphicsGetImageFromCurrentImageContext();
+
             }
 
-            [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
+            if (self.useCache) {
+                [[self class] placeImage:resultImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:NO];
+            }
 
             if (self.useBlur
                 && mode != UIViewContentModeCenter) {
@@ -873,7 +886,9 @@
 
                 blurredImage = UIGraphicsGetImageFromCurrentImageContext();
 
-                [[self class] placeImage:blurredImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+                if (self.useCache) {
+                    [[self class] placeImage:blurredImage inCacheForSize:size withCorners:corners withHash:[image cacheHash] withBlur:YES];
+                }
 
                 UIGraphicsEndImageContext();
 

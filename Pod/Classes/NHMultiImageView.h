@@ -52,6 +52,8 @@
 @property (nonatomic, assign) BOOL useCenterBlurImage;
 @property (nonatomic, strong) UIImage *blurCenterImage;
 
+@property (nonatomic, assign) BOOL useCache;
+
 - (void)changePatternTo:(NSArray*)pattern;
 - (void)setImageArraySize:(NSUInteger)size;
 
