@@ -11,6 +11,18 @@
 #import <objc/runtime.h>
 #import "Private/UIImage+ImageEffects.h"
 
+
+#define image(name) \
+[[UIImage alloc] initWithContentsOfFile: \
+[[NSBundle bundleForClass:[NHMultiImageView class]]\
+pathForResource:name ofType:@"png"]]
+
+#define localization(name, table) \
+NSLocalizedStringFromTableInBundle(name, \
+table, \
+[NSBundle bundleForClass:[NHMultiImageView class]], nil)
+
+
 @interface NHImageItem : NSObject
 
 @property (nonatomic, strong) UIImage *image;
@@ -371,7 +383,7 @@
     self.firstResponderIndex = self.selectedIndex;
     [[UIMenuController sharedMenuController] setMenuItems:@[
                                                             [[UIMenuItem alloc]
-                                                             initWithTitle:NSLocalizedStringFromTable(@"NHImageView.save", @"NHMultiImageView", nil)
+                                                             initWithTitle:localization(@"NHImageView.save", @"NHMultiImageView")
                                                              action:@selector(save:)]
                                                             ]];
     [[UIMenuController sharedMenuController] setTargetRect:self.selectedRect inView:self];
@@ -875,7 +887,7 @@
                  drawAtPoint:CGPointZero];
 
                 if (self.useCenterBlurImage) {
-                    UIImage *blurCenterImage = self.blurCenterImage ?: [UIImage imageNamed:@"NHMultiImage.blurCenter.png"];
+                    UIImage *blurCenterImage = self.blurCenterImage ?: image(@"NHMultiImage.blurCenter");//[UIImage imageNamed:@"NHMultiImage.blurCenter.png"];
                     CGFloat blurImageWidth = MIN(blurCenterImage.size.width, MIN(size.width - 10, size.height - 10));
                     CGFloat blurImageHeight = MIN(blurCenterImage.size.height, MIN(size.width - 10, size.height - 10));
                     CGFloat blurImageX = (size.width - blurImageWidth) / 2;

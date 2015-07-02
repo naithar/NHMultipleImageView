@@ -2,12 +2,13 @@
   "images" : [
     {
       "idiom" : "universal",
-      "scale" : "1x"
+      "scale" : "1x",
+      "filename" : "img2.png"
     },
     {
       "idiom" : "universal",
       "scale" : "2x",
-      "filename" : "leoniewau.png"
+      "filename" : "img2@2x.png"
     },
     {
       "idiom" : "universal",
