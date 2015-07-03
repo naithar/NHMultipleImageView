@@ -13,7 +13,7 @@
 
 
 #define image(name) \
-[[UIImage alloc] initWithContentsOfFile: \
+[UIImage imageWithContentsOfFile: \
 [[NSBundle bundleForClass:[NHMultiImageView class]]\
 pathForResource:name ofType:@"png"]]
 
